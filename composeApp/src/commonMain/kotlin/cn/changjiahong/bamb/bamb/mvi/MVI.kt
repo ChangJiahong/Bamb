@@ -1,4 +1,4 @@
-package cn.changjiahong.bamb.bamb
+package cn.changjiahong.bamb.bamb.mvi
 
 interface UiEvent {
     fun sendTo(viewModel: MviScreenModel) {
@@ -9,7 +9,5 @@ interface UiEvent {
 interface UiState
 interface UiEffect
 
-interface UiEffectHandler {
-    fun onHandleEffect(effect: UiEffect)
-}
+public typealias UiEffectHandler = (effect: UiEffect) -> Boolean
 

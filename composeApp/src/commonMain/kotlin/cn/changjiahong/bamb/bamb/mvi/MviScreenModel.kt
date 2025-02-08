@@ -1,13 +1,12 @@
-package cn.changjiahong.bamb.bamb
+package cn.changjiahong.bamb.bamb.mvi
 
-import androidx.lifecycle.viewModelScope
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
+import cn.changjiahong.bamb.bamb.uieffect.UiEffectDispatcher
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
-import org.koin.core.component.get
 
 abstract class MviScreenModel : ScreenModel, KoinComponent {
     private val _uiEvent = MutableSharedFlow<UiEvent>()
@@ -16,9 +15,8 @@ abstract class MviScreenModel : ScreenModel, KoinComponent {
     private val _uiEffect = MutableSharedFlow<UiEffect>()
     private val uiEffect = _uiEffect.asSharedFlow()
 
-    private val uiEffectHandler: UiEffectHandler by lazy { get<UiEffectHandler>() }
-
-    private var _handleEffect: (effect: UiEffect) -> Unit = { uiEffectHandler.onHandleEffect(it) }
+    private var _handleEffect: (effect: UiEffect) -> Unit =
+        { UiEffectDispatcher.dispatchEffect(it) }
 
 
     init {
@@ -54,7 +52,7 @@ abstract class MviScreenModel : ScreenModel, KoinComponent {
     //    protected abstract fun initialState(): S
     protected abstract fun handleEvent(event: UiEvent)
 
-    open fun handleEffect(handle: (effect: UiEffect) -> Boolean) {
-        _handleEffect = { if (!handle(it)) uiEffectHandler.onHandleEffect(it) }
+    open fun handleEffect(handle: UiEffectHandler) {
+        _handleEffect = { if (!handle(it)) _handleEffect(it) }
     }
 }

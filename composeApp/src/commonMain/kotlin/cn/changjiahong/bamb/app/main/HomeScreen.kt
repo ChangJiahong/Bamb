@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -21,12 +20,15 @@ import bamb.composeapp.generated.resources.Res
 import bamb.composeapp.generated.resources.app_name
 import bamb.composeapp.generated.resources.compose_multiplatform
 import cafe.adriel.voyager.koin.koinScreenModel
+import cafe.adriel.voyager.navigator.tab.Tab
+import cafe.adriel.voyager.navigator.tab.TabOptions
 import cn.changjiahong.bamb.Greeting
-import cn.changjiahong.bamb.app.OtherScreen
-import cn.changjiahong.bamb.bamb.GoEffect
 import org.jetbrains.compose.resources.painterResource
 
-object HomeScreen : TabHost(0u, Res.string.app_name, Icons.Default.Home) {
+object HomeScreen : Tab {
+    override val options: TabOptions
+        @Composable get() = TabHost(0u, Res.string.app_name, Icons.Default.Home)
+
     @Composable
     override fun Content() = Home()
 }

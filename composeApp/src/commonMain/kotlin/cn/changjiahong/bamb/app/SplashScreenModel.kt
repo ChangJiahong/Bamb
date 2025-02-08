@@ -1,8 +1,8 @@
 package cn.changjiahong.bamb.app
 
-import cn.changjiahong.bamb.bamb.GoEffect
-import cn.changjiahong.bamb.bamb.MviScreenModel
-import cn.changjiahong.bamb.bamb.UiEvent
+import cn.changjiahong.bamb.bamb.mvi.MviScreenModel
+import cn.changjiahong.bamb.bamb.mvi.UiEvent
+import cn.changjiahong.bamb.bamb.uieffect.GoEffect
 import org.koin.core.annotation.Factory
 
 @Factory
