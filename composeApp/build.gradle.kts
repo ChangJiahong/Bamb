@@ -43,6 +43,7 @@ kotlin {
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
+            implementation(compose.material)
             implementation(compose.material3)
             implementation(compose.ui)
             implementation(compose.components.resources)
@@ -51,11 +52,13 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtime.compose)
 
             // Multiplatform
+            implementation(libs.sonner)
 
             // Navigator
             implementation(libs.bundles.vovager)
 
             implementation(project.dependencies.platform(libs.koin.bom))
+            implementation(libs.koin.core)
             implementation(libs.koin.compose)
             // Koin Annotations
             api(libs.koin.annotations)

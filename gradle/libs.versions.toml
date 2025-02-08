@@ -1,5 +1,5 @@
 [versions]
-agp = "8.5.2"
+agp = "8.5.0-alpha06"
 android-compileSdk = "34"
 android-minSdk = "24"
 android-targetSdk = "34"
@@ -15,10 +15,11 @@ compose-multiplatform = "1.7.0"
 junit = "4.13.2"
 kotlin = "2.1.0"
 kotlinx-coroutines = "1.10.1"
+sonner = "0.3.8"
 voyagerVersion = "1.1.0-beta02"
 ksp_version = "2.0.20-1.0.25"
 koin_annotations_version = "2.0.0-Beta1"
-koin_bom = "4.0.0"
+koin_bom = "3.5.3"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -34,6 +35,7 @@ androidx-activity-compose = { module = "androidx.activity:activity-compose", ver
 androidx-lifecycle-viewmodel = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel", version.ref = "androidx-lifecycle" }
 androidx-lifecycle-runtime-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
 kotlinx-coroutines-swing = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
+sonner = { module = "io.github.dokar3:sonner", version.ref = "sonner" }
 voyager-koin = { group = "cafe.adriel.voyager", name = "voyager-koin", version.ref = "voyagerVersion" }
 voyager-transitions = { group = "cafe.adriel.voyager", name = "voyager-transitions", version.ref = "voyagerVersion" }
 voyager-tab-navigator = { group = "cafe.adriel.voyager", name = "voyager-tab-navigator", version.ref = "voyagerVersion" }
@@ -44,6 +46,7 @@ koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin_bom" }
 koin-ksp-compiler = { module = "io.insert-koin:koin-ksp-compiler", version.ref = "koin_annotations_version" }
 koin-annotations = { module = "io.insert-koin:koin-annotations", version.ref = "koin_annotations_version" }
 koin-compose = { module = "io.insert-koin:koin-compose" }
+koin-core = { module = "io.insert-koin:koin-core" }
 
 [bundles]
 vovager = [

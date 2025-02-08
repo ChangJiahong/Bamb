@@ -43,7 +43,7 @@ private fun HomeScreen.Home() {
             val greeting = remember { Greeting().greet() }
             Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
                 Image(painterResource(Res.drawable.compose_multiplatform), null, modifier = Modifier.clickable(onClick = {
-                    homeScreenModel.sendEffect(GoEffect(OtherScreen()))
+                    homeScreenModel.cli()
                 }))
                 Text("Compose: $greeting")
             }
