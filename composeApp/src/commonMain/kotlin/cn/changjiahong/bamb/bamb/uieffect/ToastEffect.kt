@@ -46,7 +46,9 @@ fun rememberToasterController(): ToasterState {
     var toaster = rememberToasterState()
     UiEffectDispatcher.register { effect ->
         when (effect) {
-            is ToastEffect -> toaster.show(effect.toast)
+            is ToastEffect -> {
+                toaster.show(effect.toast)
+            }
             else -> false
         }
         true
