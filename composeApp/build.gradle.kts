@@ -35,10 +35,13 @@ kotlin {
 
     sourceSets {
         val desktopMain by getting
+        val ktorVersion = "2.1.2"
 
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+            implementation("io.ktor:ktor-client-android:$ktorVersion")
+
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -63,11 +66,24 @@ kotlin {
             // Koin Annotations
             api(libs.koin.annotations)
 
+            // Logging
+            implementation("io.ktor:ktor-client-logging:$ktorVersion")
+            implementation("ch.qos.logback:logback-classic:1.2.11")
+
+            // Ktor-core
+            implementation("io.ktor:ktor-client-core:$ktorVersion")
+            // Negotiation
+            implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
+            implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
+
 
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
+        }
+        iosMain.dependencies {
+            implementation("io.ktor:ktor-client-darwin:$ktorVersion")
         }
     }
 
