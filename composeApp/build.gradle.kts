@@ -72,7 +72,7 @@ kotlin {
 //            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
             implementation(libs.ktorfit.converters.response)
 ////            implementation("de.jensklingenberg.ktorfit:ktorfit-converters-call:$ktorfitVersion")
-            implementation(libs.ktorfit.converters.flow)
+//            implementation(libs.ktorfit.converters.flow)
 //
 //            // Only needed when you want to use Kotlin Serialization
             implementation(libs.bundles.kotlinx.serialization)

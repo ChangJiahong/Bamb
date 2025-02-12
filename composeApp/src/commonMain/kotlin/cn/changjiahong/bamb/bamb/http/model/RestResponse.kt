@@ -1,5 +1,6 @@
 package cn.changjiahong.bamb.bamb.http.model
 
+import cn.changjiahong.bamb.bamb.http.status.RestStatusCode
 import kotlinx.serialization.Serializable
 
 /**
@@ -9,11 +10,15 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class RestResponse<T>(
-    val status: Int,
+    val status: RestStatusCode,
     val msg: String = "",
     val data: T?
 ) {
-    fun isSuccess() = status == 200
+
+    constructor(restResponse: RestResponse<T>) : this(restResponse.status,restResponse.msg,restResponse.data)
+
+
+    fun isSuccess() = status == RestStatusCode.OK
 
     fun checkData() = data != null
 
@@ -21,6 +26,9 @@ data class RestResponse<T>(
 
     fun requsetData() = data!!
 }
+
+
+
 
 @Serializable
 object NoData
