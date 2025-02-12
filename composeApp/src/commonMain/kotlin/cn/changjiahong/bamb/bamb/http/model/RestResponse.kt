@@ -8,10 +8,10 @@ import kotlinx.serialization.Serializable
  * @date 2022/6/29
  */
 @Serializable
-data class RestResponse(
+data class RestResponse<T>(
     val status: Int,
     val msg: String = "",
-    val data: String
+    val data: T?
 ) {
     fun isSuccess() = status == 200
 

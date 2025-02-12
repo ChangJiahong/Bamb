@@ -37,12 +37,10 @@ kotlin {
 
     sourceSets {
         val desktopMain by getting
-//        val ktorVersion = "2.1.2"
 
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
-//            implementation("io.ktor:ktor-client-android:$ktorVersion")
 
         }
         commonMain.dependencies {
@@ -69,21 +67,18 @@ kotlin {
             api(libs.koin.annotations)
 
 
-            val ktorVersion = "3.0.1"
-            val ktorfitVersion = "2.2.0"
-            // Logging
-            implementation("de.jensklingenberg.ktorfit:ktorfit-lib:$ktorfitVersion")
+            implementation(libs.ktorfit.lib)
             // implementation("de.jensklingenberg.ktorfit:ktorfit-lib-light:$ktorfitVersion")
-            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
-            implementation("de.jensklingenberg.ktorfit:ktorfit-converters-response:$ktorfitVersion")
-//            implementation("de.jensklingenberg.ktorfit:ktorfit-converters-call:$ktorfitVersion")
-            implementation("de.jensklingenberg.ktorfit:ktorfit-converters-flow:$ktorfitVersion")
-
-            // Only needed when you want to use Kotlin Serialization
+//            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
+            implementation(libs.ktorfit.converters.response)
+////            implementation("de.jensklingenberg.ktorfit:ktorfit-converters-call:$ktorfitVersion")
+            implementation(libs.ktorfit.converters.flow)
+//
+//            // Only needed when you want to use Kotlin Serialization
             implementation(libs.bundles.kotlinx.serialization)
-            implementation("io.ktor:ktor-client-serialization:$ktorVersion")
-            implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
-            implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
+            implementation(libs.ktor.client.serialization)
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.serialization.kotlinx.json)
 
 
         }
@@ -92,7 +87,9 @@ kotlin {
             implementation(libs.kotlinx.coroutines.swing)
         }
         iosMain.dependencies {
-//            implementation("io.ktor:ktor-client-darwin:$ktorVersion")
+//            implementation("io.ktor:ktor-client-ios:$ktorVersion")
+            // Coroutines Native
+            implementation(libs.kotlinx.coroutines.core)
         }
     }
 
@@ -105,8 +102,8 @@ kotlin {
 
 // KSP Tasks
 dependencies {
-    kspCommonMainMetadata(libs.koin.ksp.compiler)
-//    add("kspCommonMainMetadata", libs.koin.ksp.compiler)
+//    kspCommonMainMetadata(libs.koin.ksp.compiler)
+    add("kspCommonMainMetadata", libs.koin.ksp.compiler)
     add("kspAndroid", libs.koin.ksp.compiler)
     add("kspIosX64", libs.koin.ksp.compiler)
     add("kspIosArm64", libs.koin.ksp.compiler)

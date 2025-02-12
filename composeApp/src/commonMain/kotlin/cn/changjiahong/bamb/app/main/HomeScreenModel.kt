@@ -20,6 +20,8 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 import org.koin.core.annotation.Factory
 
 @Factory
@@ -28,30 +30,34 @@ class HomeScreenModel : MviScreenModel() {
 
     }
 
+    val ktorfit by lazy {
+        Ktorfit.Builder()
+            .httpClient {
+                install(ContentNegotiation) {
+                    json(Json {
+                        ignoreUnknownKeys = true
+                    })
+                }
+            }
+            .converterFactories(FlowConverterFactory())
+            .converterFactories(ResponseConverterFactory())
+            .baseUrl("https://apifoxmock.com/m1/5740445-5423178-default/")
+            .build()
+    }
 
     fun cli() {
-        val ktorfit =
-            Ktorfit.Builder()
-                .httpClient {
-                    install(ContentNegotiation) {
-                        json()
-                    }
-                }
-                .converterFactories(FlowConverterFactory())
-                .converterFactories(ResponseConverterFactory())
-                .baseUrl("https://apifoxmock.com/m1/5740445-5423178-default/")
-                .build()
+
 
         val api = ktorfit.createLoginService()
 
         screenModelScope.launch {
 
-            // val g = httpClient.get("https://apifoxmock.com/m1/5740445-5423178-default/referralpost")
+//             val g = httpClient.get("https://apifoxmock.com/m1/5740445-5423178-default/referralpost")
 
 //            val map:Map<String,Any> = g.body()
 
             api.login().collect { value ->
-                println(value)
+                println(value.data?.get(0))
             }
 
         }
@@ -62,5 +68,11 @@ class HomeScreenModel : MviScreenModel() {
 
 interface LoginService {
     @GET("referralpost")
-    fun login(): Flow<Response<RestResponse>>
+    fun login(): Flow<RestResponse<Array<UU>>>
 }
+
+@Serializable
+data class UU(val title:String)
+
+typealias FlowResponse<T> = Flow<Response<T>>
+typealias FlowRestResponse<T> = Flow<RestResponse<T>>
