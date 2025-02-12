@@ -1,4 +1,4 @@
-package cn.changjiahong.bamb.bamb.http.exp
+package cn.changjiahong.bamb.bamb.http.status
 
 enum class StatusMsg(val code: Int) {
 

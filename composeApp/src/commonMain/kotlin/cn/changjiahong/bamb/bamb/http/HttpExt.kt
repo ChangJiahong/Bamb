@@ -1,11 +1,12 @@
 package cn.changjiahong.bamb.bamb.http
 
-import cn.changjiahong.bamb.bamb.http.exp.ApiExp
-import cn.changjiahong.bamb.bamb.http.exp.StatusMsg
-import cn.changjiahong.bamb.bamb.http.model.NoData
 import cn.changjiahong.bamb.bamb.http.model.RestResponse
+import de.jensklingenberg.ktorfit.Response
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.transform
+
+
+typealias FlowResponse<T> = Flow<Response<T>>
+typealias FlowRestResponse<T> = Flow<RestResponse<T>>
 
 //
 //inline fun <reified T> Flow<RestResponse<T>>.data(): Flow<T> =

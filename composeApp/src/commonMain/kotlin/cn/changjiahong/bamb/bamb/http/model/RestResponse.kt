@@ -22,4 +22,5 @@ data class RestResponse<T>(
     fun requsetData() = data!!
 }
 
+@Serializable
 object NoData
