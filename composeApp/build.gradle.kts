@@ -53,8 +53,11 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
+            // Add KMP dependencies here
+            implementation(libs.kotlinx.datetime)
+            implementation(libs.kotlinx.coroutines.core)
 
-            // Multiplatform
+            // toast
             implementation(libs.sonner)
 
             // Navigator
@@ -67,19 +70,19 @@ kotlin {
             api(libs.koin.annotations)
 
 
+            //ktorfit
             implementation(libs.ktorfit.lib)
-            // implementation("de.jensklingenberg.ktorfit:ktorfit-lib-light:$ktorfitVersion")
-//            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
             implementation(libs.ktorfit.converters.response)
-////            implementation("de.jensklingenberg.ktorfit:ktorfit-converters-call:$ktorfitVersion")
-//            implementation(libs.ktorfit.converters.flow)
-//
 //            // Only needed when you want to use Kotlin Serialization
             implementation(libs.bundles.kotlinx.serialization)
             implementation(libs.ktor.client.serialization)
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.serialization.kotlinx.json)
 
+            // datastore
+            implementation("androidx.datastore:datastore-core-okio:1.1.2")
+            implementation(libs.okio)
+            implementation(libs.kotlin.stdlib)
 
         }
         desktopMain.dependencies {

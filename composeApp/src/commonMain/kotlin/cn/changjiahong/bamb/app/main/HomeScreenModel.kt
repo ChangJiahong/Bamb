@@ -1,6 +1,7 @@
 package cn.changjiahong.bamb.app.main
 
 import cafe.adriel.voyager.core.model.screenModelScope
+import cn.changjiahong.bamb.bamb.datastore.a
 import cn.changjiahong.bamb.bamb.http.asData
 import cn.changjiahong.bamb.bamb.http.collectIn
 import cn.changjiahong.bamb.bamb.http.status.RestError
@@ -17,6 +18,10 @@ class HomeScreenModel(val testService: TestService) : MviScreenModel() {
 
     }
 
+
+    init {
+        a(screenModelScope)
+    }
     fun cli() {
 
 
