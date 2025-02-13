@@ -4,8 +4,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.staticCompositionLocalOf
+import cafe.adriel.voyager.core.annotation.InternalVoyagerApi
 import cafe.adriel.voyager.navigator.CurrentScreen
 import cafe.adriel.voyager.navigator.Navigator
+import cafe.adriel.voyager.navigator.internal.BackHandler
+import cn.changjiahong.bamb.app.MainScreen
 import cn.changjiahong.bamb.app.SplashScreen
 import cn.changjiahong.bamb.bamb.uieffect.Toaster
 import cn.changjiahong.bamb.bamb.uieffect.UiEffectDispatcher
@@ -29,12 +32,16 @@ val appModules: Module
 
     }
 
-@OptIn(KoinExperimentalAPI::class)
+@OptIn(KoinExperimentalAPI::class, InternalVoyagerApi::class)
 @Composable
 @Preview
 fun App() {
     Navigator(SplashScreen) { globalNavigator ->
         CompositionLocalProvider(GlobalNavigator providesDefault globalNavigator) {
+
+            BackHandler(globalNavigator.lastItem is MainScreen){
+                getPlatform().moveTaskToBack(true)
+            }
 
             NavigatorEffectRegister(globalNavigator)
 

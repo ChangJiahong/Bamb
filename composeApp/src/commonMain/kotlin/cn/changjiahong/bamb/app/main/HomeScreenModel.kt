@@ -27,7 +27,7 @@ class HomeScreenModel(val testService: TestService) : MviScreenModel() {
 
     fun cli() {
 
-        GoEffect(RR.MAIN).trigger()
+        GoEffect(RR.OTHER).trigger()
 
 //        testService.t1().catch { cause ->
 //            when(cause){
