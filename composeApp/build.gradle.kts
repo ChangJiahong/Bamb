@@ -92,7 +92,7 @@ kotlin {
         iosMain.dependencies {
 //            implementation("io.ktor:ktor-client-ios:$ktorVersion")
             // Coroutines Native
-            implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.kotlinx.coroutines.core.ios)
         }
     }
 
