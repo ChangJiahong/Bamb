@@ -1,6 +1,7 @@
 package cn.changjiahong.bamb.app
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,6 +17,8 @@ import androidx.compose.ui.Modifier
 import bamb.composeapp.generated.resources.Res
 import bamb.composeapp.generated.resources.compose_multiplatform
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.core.screen.ScreenKey
+import cafe.adriel.voyager.core.screen.uniqueScreenKey
 import cafe.adriel.voyager.koin.koinScreenModel
 import cn.changjiahong.bamb.GlobalNavigator
 import kotlinx.coroutines.delay
@@ -24,6 +27,10 @@ import kotlinx.coroutines.flow.onCompletion
 import org.jetbrains.compose.resources.painterResource
 
 object SplashScreen : Screen {
+
+    override val key: ScreenKey
+        get() = uniqueScreenKey
+
     @Composable
     override fun Content() = Splash()
 }
@@ -39,7 +46,9 @@ fun SplashScreen.Splash() {
             Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Image(painterResource(Res.drawable.compose_multiplatform), null)
+            Image(painterResource(Res.drawable.compose_multiplatform), null, modifier = Modifier.clickable(onClick = {
+                splashScreenModel.tryAutoLogin()
+            }))
             Text(count.toString())
         }
 

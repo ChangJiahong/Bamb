@@ -11,5 +11,5 @@ data class UserInfo(
     val nimToken: String,
     val accessToken: String = "",
     val refreshToken: String = "",
-    val nona: String
+    val nona: String = ""
 )

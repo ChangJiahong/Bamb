@@ -33,7 +33,7 @@ inline fun <reified T> FlowResponse<T>.body(): Flow<T> = this.map { response ->
         if (response.status == HttpStatusCode.OK) {
             val body = response.body()
             if (body == null) {
-                throw RestStatusCode.NULLResponseError.error()
+                throw RestStatusCode.NullResponseError.error()
             } else {
                 return@map body
             }
@@ -41,7 +41,10 @@ inline fun <reified T> FlowResponse<T>.body(): Flow<T> = this.map { response ->
             throw RestStatusCode.HttpError.error(response.status.toString(), response)
         }
     } catch (e: Exception) {
-        throw RestStatusCode.UnknownError.error(e.message ?: "")
+        when (e) {
+            is RestError -> throw e
+            else -> throw RestStatusCode.UnknownError.error(e.message ?: "")
+        }
     }
 }
 
@@ -59,7 +62,10 @@ inline fun <reified T> FlowRestResponse<T>.data(): Flow<T> =
                 }
             }
         } else {
-            throw restResponse.status.error(restResponse.msg, restResponse.data)
+            throw restResponse.status.error(
+                if (restResponse.msg.isNotEmpty()) restResponse.msg else restResponse.status.id,
+                restResponse.data
+            )
         }
     }
 

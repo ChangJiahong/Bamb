@@ -1,5 +1,6 @@
 package cn.changjiahong.bamb.bamb.http
 
+import cn.changjiahong.bamb.bamb.http.status.RestError
 import cn.changjiahong.bamb.bamb.http.status.RestStatusCode
 import cn.changjiahong.bamb.bamb.http.status.error
 import de.jensklingenberg.ktorfit.Ktorfit
@@ -27,19 +28,26 @@ public class FlowConverterFactory : Converter.Factory {
                         if (requestType.typeInfo.type == HttpResponse::class) {
                             emit(response)
                         } else {
-                            if (response.status == HttpStatusCode.OK) {
-                                val convertedBody =
-                                    ktorfit.nextSuspendResponseConverter(
-                                        this@FlowConverterFactory,
-                                        typeData.typeArgs.first(),
-                                    )?.convert(KtorfitResult.Success(response))
-                                        ?: response.body(typeData.typeArgs.first().typeInfo)
-                                emit(convertedBody)
-                            } else {
-                                throw RestStatusCode.HttpError.error(
-                                    response.status.toString(),
-                                    response
-                                )
+                            try {
+                                if (response.status == HttpStatusCode.OK) {
+                                    val convertedBody =
+                                        ktorfit.nextSuspendResponseConverter(
+                                            this@FlowConverterFactory,
+                                            typeData.typeArgs.first(),
+                                        )?.convert(KtorfitResult.Success(response))
+                                            ?: response.body(typeData.typeArgs.first().typeInfo)
+                                    emit(convertedBody)
+                                } else {
+                                    throw RestStatusCode.HttpError.error(
+                                        response.status.toString(),
+                                        response
+                                    )
+                                }
+                            }catch (e: Exception){
+                                when(e){
+                                    is RestError -> throw e
+                                    else -> throw RestStatusCode.UnknownError.error(e.message ?: "")
+                                }
                             }
                         }
                     }

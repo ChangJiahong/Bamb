@@ -18,7 +18,6 @@ val DataStores.userStore by dataStore(UserStore())
 val userStore by DataStores.userStore.sync()
 
 
-
 object LoginState {
 
     fun isLoggedIn(): Boolean {
@@ -30,10 +29,10 @@ object LoginState {
                 && userInfo.nimToken.isNotEmpty()
     }
 
-    fun saveUserInfo(userInfo: UserInfo) {
-        var userStore by DataStores.userStore.sync()
-        userStore = userStore.copy(userInfo = userInfo)
-    }
+//    fun saveUserInfo(userInfo: UserInfo) {
+//        var userStore by DataStores.userStore.sync()
+//        userStore = userStore.copy(userInfo = userInfo)
+//    }
 
     fun getUserInfo(): UserInfo? {
         val userStore by DataStores.userStore.sync()

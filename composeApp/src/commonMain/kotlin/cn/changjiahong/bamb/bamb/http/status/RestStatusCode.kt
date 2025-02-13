@@ -19,7 +19,8 @@ enum class RestStatusCode(val code: Int) {
 
     // 反序列化错误
     DeserializationError(-3),
-    NULLResponseError(-4),
+    NullResponseError(-4),
+    NullStatusError(-5),
 
     // 客户端未知错误
     UnknownError(-500),

@@ -81,7 +81,6 @@ class LoginViewModel(val loginRepository: ILoginRepository) : MviScreenModel() {
         }
         loginRepository.login(username, password)
             .catch { cause ->
-                println(cause)
                 if (cause is RestError) {
                     ToastEffect(cause.msg).trigger()
                 }

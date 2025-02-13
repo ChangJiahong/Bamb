@@ -19,7 +19,7 @@ class SplashScreenModel() : MviScreenModel() {
     fun tryAutoLogin() {
         if (LoginState.isLoggedIn()) {
             val userInfo = LoginState.getUserInfo()!!
-            GoEffect(RR.MAIN,true).trigger()
+            GoEffect(RR.MAIN,false).trigger()
 
 //            nimLoginRepository.login(userInfo.nimAccount, userInfo.nimToken).catch { cause ->
 //                DefaultEffect.Go(RR.LOGIN, true).trigger()

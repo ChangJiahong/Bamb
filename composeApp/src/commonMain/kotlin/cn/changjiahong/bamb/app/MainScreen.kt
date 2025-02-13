@@ -8,6 +8,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.core.screen.ScreenKey
+import cafe.adriel.voyager.core.screen.uniqueScreenKey
 import cafe.adriel.voyager.navigator.tab.CurrentTab
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
@@ -18,6 +20,10 @@ import cn.changjiahong.bamb.app.main.HomeScreen
 val tabs = arrayOf(HomeScreen,DevicesScreen)
 
 object MainScreen : Screen {
+
+    override val key: ScreenKey
+        get() = uniqueScreenKey
+
     @Composable
     override fun Content() {
         TabNavigator(HomeScreen) {

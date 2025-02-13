@@ -10,13 +10,10 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class RestResponse<T>(
-    val status: RestStatusCode,
+    val status: RestStatusCode = RestStatusCode.NullStatusError,
     val msg: String = "",
-    val data: T?
+    val data: T? = null
 ) {
-
-    constructor(restResponse: RestResponse<T>) : this(restResponse.status,restResponse.msg,restResponse.data)
-
 
     fun isSuccess() = status == RestStatusCode.OK
 
@@ -26,8 +23,6 @@ data class RestResponse<T>(
 
     fun requsetData() = data!!
 }
-
-
 
 
 @Serializable
