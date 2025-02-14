@@ -2,6 +2,7 @@ package cn.changjiahong.bamb.app.login
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -64,26 +65,6 @@ fun Screen.LoginView() {
             .padding(40.dp, 50.dp)
     ) {
 
-
-//        LaunchedEffect(Unit) {
-//            loginViewModel.handleEffect { value ->
-//                when (value) {
-//                    LoginUiEffect.LoginSuccess -> {
-//                        // 登录成功
-//                        activity.startCompose(RR.MAIN_SCREEN)
-//                        activity.finish()
-//                    }
-//
-//                    is LoginUiEffect.LoginError -> {
-//                        Toast.makeText(context, value.msg, Toast.LENGTH_SHORT).show()
-//                    }
-//
-//                    else -> return@handleEffect false
-//                }
-//                true
-//            }
-//        }
-
         Text(
             "Sign In",
             style = MaterialTheme.typography.displayLarge,
@@ -118,6 +99,14 @@ fun Screen.LoginView() {
         ) {
             Text("Sign In")
         }
+
+        Text(
+            "Don’t have an account? Sign up!",
+            modifier = Modifier.padding { paddingTop(20.dp) }.clickable(onClick = {
+                loginViewModel.goRegsiter()
+            }),
+            color = Color(0xff333333)
+        )
 
 //        val loginNavController = LoginNavController.current
 

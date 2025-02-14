@@ -17,6 +17,8 @@ class SplashScreenModel() : MviScreenModel() {
 
     // 尝试自动登录
     fun tryAutoLogin() {
+        GoEffect(RR.LOGIN,true).trigger()
+        return
         if (LoginState.isLoggedIn()) {
             val userInfo = LoginState.getUserInfo()!!
             GoEffect(RR.MAIN,true).trigger()

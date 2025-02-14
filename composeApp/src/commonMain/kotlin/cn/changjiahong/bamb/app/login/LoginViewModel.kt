@@ -120,4 +120,8 @@ class LoginViewModel(val loginRepository: ILoginRepository) : MviScreenModel() {
         return msg.isEmpty()
     }
 
+    fun goRegsiter() {
+        GoEffect(RR.REGISTER).trigger()
+    }
+
 }
