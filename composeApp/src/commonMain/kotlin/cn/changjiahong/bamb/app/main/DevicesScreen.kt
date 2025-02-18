@@ -3,17 +3,24 @@ package cn.changjiahong.bamb.app.main
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -43,6 +50,9 @@ import bamb.composeapp.generated.resources.Res
 import bamb.composeapp.generated.resources.app_name
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
+import compose.icons.FeatherIcons
+import compose.icons.feathericons.Feather
+import compose.icons.feathericons.Server
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -63,13 +73,18 @@ private fun DevicesScreen.Devices() {
 
 
     Column {
-        Row {
+        Row(verticalAlignment = Alignment.CenterVertically){
             IconButton(onClick = {
                 scope.launch {
                     sheetState.show()
-
                 }
-            }) { Icon(Icons.Default.MoreVert, "") }
+            }) { Icon(FeatherIcons.Server, "") }
+
+            Text("Device001")
+            Icon(
+                imageVector = Icons.AutoMirrored.Default.KeyboardArrowRight, // 这里可以换成其他图标
+                contentDescription = "",
+            )
 
         }
     }
@@ -124,7 +139,17 @@ fun ModalBottomSheetPlus(
                 isShow = false
                 onDismissRequest()
             },
+            modifier = modifier,
             sheetState = sheetState,
+            sheetMaxWidth = sheetMaxWidth,
+            shape = shape,
+            containerColor = containerColor,
+            contentColor = contentColor,
+            tonalElevation = tonalElevation,
+            scrimColor = scrimColor,
+            dragHandle = dragHandle,
+            contentWindowInsets = contentWindowInsets,
+            properties = properties,
             content = content
         )
     }

@@ -84,6 +84,8 @@ kotlin {
             implementation(libs.okio)
             implementation(libs.kotlin.stdlib)
 
+            implementation(libs.composeIcons.feather)
+
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
