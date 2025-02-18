@@ -46,7 +46,7 @@ kotlin {
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
-            implementation(compose.material)
+//            implementation(compose.material)
             implementation(compose.material3)
             implementation(compose.ui)
             implementation(compose.components.resources)
@@ -80,7 +80,7 @@ kotlin {
             implementation(libs.ktor.serialization.kotlinx.json)
 
             // datastore
-            implementation("androidx.datastore:datastore-core-okio:1.1.2")
+            implementation(libs.androidx.datastore.core.okio)
             implementation(libs.okio)
             implementation(libs.kotlin.stdlib)
 
