@@ -10,8 +10,17 @@ import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.pullToRefresh
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import app.cash.paging.LoadStateError
@@ -38,6 +47,8 @@ import cn.changjiahong.bamb.bamb.http.status.error
 import cn.changjiahong.bamb.service.Api
 import de.jensklingenberg.ktorfit.http.GET
 import de.jensklingenberg.ktorfit.http.Query
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import org.koin.core.annotation.Factory
 import org.koin.core.annotation.Single
@@ -56,7 +67,21 @@ private fun HomeScreen.Home() {
 
     val pagingItems = homeScreenModel.pagingFlow.collectAsLazyPagingItems()
 
-    RefreshLazyColumn(pagingItems, modifier = Modifier.fillMaxSize(),
+    var refreshing by remember { mutableStateOf(false) }
+    // 用协程模拟一个耗时加载
+    val scope = rememberCoroutineScope()
+
+    RefreshLazyColumn(
+        pagingItems, modifier = Modifier.fillMaxSize(),
+        isRefreshing=refreshing,
+        onRefresh = {
+            scope.launch{
+                refreshing = true
+                delay(2000)
+                refreshing = false
+            }
+            println("refreshhss")
+        },
         refreshError = { Text(it.msg) },
         appendLoading = { Text("加载中。。。。。。", modifier = Modifier.height(20.dp)) }) {
         itemsIndexed(pagingItems) { index, item ->
@@ -70,40 +95,44 @@ private fun HomeScreen.Home() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun <T : Any> RefreshLazyColumn(
     pagingItems: LazyPagingItems<T>,
     modifier: Modifier = Modifier,
+    isRefreshing: Boolean,
+    onRefresh: () -> Unit,
     refreshError: @Composable LazyItemScope.(RestError) -> Unit = {},
     appendError: @Composable LazyItemScope.(RestError) -> Unit = {},
     appendLoading: @Composable LazyItemScope.() -> Unit = {},
     content: LazyListScope.() -> Unit
 ) {
 
-    LazyColumn(modifier = modifier) {
-        content()
-
-        pagingItems.loadState.apply {
-            when {
+    PullToRefreshBox(isRefreshing, modifier = modifier, onRefresh = onRefresh) {
+        LazyColumn() {
+            content()
+            pagingItems.loadState.apply {
+                when {
 //                refresh is LoadStateLoading -> {}
 //                refresh is LoadStateNotLoading -> {}
-                refresh is LoadStateError -> {
-                    item {
-                        refreshError((refresh as LoadStateError).error.asRestError())
+                    refresh is LoadStateError -> {
+                        item {
+                            refreshError((refresh as LoadStateError).error.asRestError())
+                        }
                     }
-                }
 
 //                append is LoadStateNotLoading -> {}
 
-                append is LoadStateLoading -> {
-                    item {
-                        appendLoading()
+                    append is LoadStateLoading -> {
+                        item {
+                            appendLoading()
+                        }
                     }
-                }
 
-                append is LoadStateError -> {
-                    item {
-                        appendError((append as LoadStateError).error.asRestError())
+                    append is LoadStateError -> {
+                        item {
+                            appendError((append as LoadStateError).error.asRestError())
+                        }
                     }
                 }
             }

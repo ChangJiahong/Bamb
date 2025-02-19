@@ -85,10 +85,9 @@ kotlin {
             implementation(libs.kotlin.stdlib)
 
             implementation(libs.composeIcons.feather)
-            val paging_version = "3.2.1"
 
-            implementation("app.cash.paging:paging-common:3.3.0-alpha02-0.5.1")
-            implementation("app.cash.paging:paging-compose-common:3.3.0-alpha02-0.5.1")
+            implementation(libs.paging.common)
+            implementation(libs.paging.compose.common)
 
         }
         desktopMain.dependencies {

@@ -20,6 +20,8 @@ kotlinxCoroutinesCore = "1.10.1"
 kotlinxCoroutinesCoreIos = "1.6.0-native-mt"
 ktorfitVersion = "2.2.0"
 ktorVersion = "3.0.1"
+pagingComposeCommon = "3.3.0-alpha02-0.5.1"
+pagingCommon = "3.3.0-alpha02-0.5.1"
 sonner = "0.3.8"
 voyagerVersion = "1.1.0-beta02"
 ksp_version = "2.1.0-1.0.29"
@@ -54,6 +56,8 @@ ktor-client-serialization = { module = "io.ktor:ktor-client-serialization", vers
 ktorfit-converters-flow = { module = "de.jensklingenberg.ktorfit:ktorfit-converters-flow", version.ref = "ktorfitVersion" }
 ktorfit-converters-response = { module = "de.jensklingenberg.ktorfit:ktorfit-converters-response", version.ref = "ktorfitVersion" }
 ktorfit-lib = { module = "de.jensklingenberg.ktorfit:ktorfit-lib", version.ref = "ktorfitVersion" }
+paging-common = { module = "app.cash.paging:paging-common", version.ref = "pagingCommon" }
+paging-compose-common = { module = "app.cash.paging:paging-compose-common", version.ref = "pagingComposeCommon" }
 sonner = { group = "io.github.dokar3", name = "sonner", version.ref = "sonner" }
 voyager-koin = { group = "cafe.adriel.voyager", name = "voyager-koin", version.ref = "voyagerVersion" }
 voyager-transitions = { group = "cafe.adriel.voyager", name = "voyager-transitions", version.ref = "voyagerVersion" }
