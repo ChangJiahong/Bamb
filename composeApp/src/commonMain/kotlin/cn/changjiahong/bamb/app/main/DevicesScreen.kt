@@ -2,6 +2,7 @@ package cn.changjiahong.bamb.app.main
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -18,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Star
@@ -50,6 +52,12 @@ import bamb.composeapp.generated.resources.Res
 import bamb.composeapp.generated.resources.app_name
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
+import com.alorma.compose.settings.ui.SettingsCheckbox
+import com.alorma.compose.settings.ui.SettingsGroup
+import com.alorma.compose.settings.ui.SettingsMenuLink
+import com.alorma.compose.settings.ui.SettingsRadioButton
+import com.alorma.compose.settings.ui.SettingsSwitch
+import com.alorma.compose.settings.ui.SettingsTriStateCheckbox
 import compose.icons.FeatherIcons
 import compose.icons.feathericons.Feather
 import compose.icons.feathericons.Server
@@ -87,6 +95,64 @@ private fun DevicesScreen.Devices() {
             )
 
         }
+
+
+        SettingsMenuLink(
+            title = { Text(text = "Setting title") },
+            subtitle = { Text(text = "Setting subtitle") },
+            modifier = Modifier,
+            enabled =  true,
+            icon = { Icon(Icons.Default.Person,"") },
+            action = { IconButton(onClick = {}){Icon(Icons.Default.AddCircle,"")} },
+            onClick = {  },
+        )
+        SettingsGroup(
+            modifier = Modifier,
+            enabled = true,
+            title = { Text(text = "SettingsGroup") },
+            contentPadding = PaddingValues(16.dp),
+        ) {
+            SettingsCheckbox(
+                state = true,
+                title = { Text(text = "Setting title") },
+                subtitle = { Text(text = "Setting subtitle") },
+                modifier = Modifier,
+                enabled = true,
+                icon = { Icon(Icons.Default.Person, "") },
+                onCheckedChange = { newState: Boolean -> },
+            )
+
+            SettingsTriStateCheckbox(
+                state = null,
+                title = { Text(text = "Setting title") },
+                subtitle = { Text(text = "Setting subtitle") },
+                modifier = Modifier,
+                enabled = true,
+                icon = { Icon(Icons.Default.Person, "") },
+                onCheckedChange = { newState: Boolean -> },
+            )
+        }
+
+        SettingsRadioButton(
+            state = true,
+            title = { Text(text = "Setting title") },
+            subtitle = { Text(text = "Setting subtitle") },
+            modifier = Modifier,
+            enabled = true,
+            icon = { Icon(Icons.Default.Person,"") },
+            onClick = { },
+        )
+
+        SettingsSwitch(
+            state =  true,
+            title = { Text(text = "Setting title") },
+            subtitle = { Text(text = "Setting subtitle") },
+            modifier = Modifier,
+            enabled = true,
+            icon = { Icon(Icons.Default.Person,"") },
+            onCheckedChange = { newState: Boolean -> },
+        )
+
     }
 
     ModalBottomSheetPlus(sheetState = sheetState) {

@@ -89,6 +89,12 @@ kotlin {
             implementation(libs.paging.common)
             implementation(libs.paging.compose.common)
 
+            implementation(libs.composeSettings.ui)
+            implementation(libs.composeSettings.ui.extended)
+
+
+
+//            implementation("io.github.ltttttttttttt:ComposeViews:1.7.0")//this,比如1.6.11.2
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
