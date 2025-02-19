@@ -85,6 +85,10 @@ kotlin {
             implementation(libs.kotlin.stdlib)
 
             implementation(libs.composeIcons.feather)
+            val paging_version = "3.2.1"
+
+            implementation("app.cash.paging:paging-common:3.3.0-alpha02-0.5.1")
+            implementation("app.cash.paging:paging-compose-common:3.3.0-alpha02-0.5.1")
 
         }
         desktopMain.dependencies {
@@ -95,6 +99,8 @@ kotlin {
 //            implementation("io.ktor:ktor-client-ios:$ktorVersion")
             // Coroutines Native
             implementation(libs.kotlinx.coroutines.core.ios)
+
+//            implementation("app.cash.paging:paging-runtime-uikit:3.3.0-alpha02-0.5.1")
         }
     }
 

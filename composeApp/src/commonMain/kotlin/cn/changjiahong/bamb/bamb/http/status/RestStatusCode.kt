@@ -38,6 +38,7 @@ enum class RestStatusCode(val code: Int) {
     TokenExpires(302),
 
     NotFoundResource(404),
+    NoDataError(405),
 
 
     // 服务端内部错误

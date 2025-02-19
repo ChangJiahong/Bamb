@@ -1,5 +1,8 @@
 package cn.changjiahong.bamb.app.main
 
+import app.cash.paging.Pager
+import app.cash.paging.PagingConfig
+import app.cash.paging.cachedIn
 import cafe.adriel.voyager.core.model.screenModelScope
 import cn.changjiahong.bamb.app.RR
 import cn.changjiahong.bamb.bamb.datastore.DataStores
@@ -19,7 +22,19 @@ import org.koin.core.annotation.Factory
 val DataStores.uu by dataStore(UU("aaa"))
 
 @Factory
-class HomeScreenModel(val testService: TestService) : MviScreenModel() {
+class HomeScreenModel(val testService: TestService,val dSource: DSource) : MviScreenModel() {
+
+
+    val pagingFlow = Pager(
+        config = PagingConfig(
+            pageSize = 10, // 每页大小
+            enablePlaceholders = false, // 是否启用占位符
+            prefetchDistance = 2 // 预加载 2 页
+        ),
+        pagingSourceFactory = { dSource }
+    ).flow
+        .cachedIn(screenModelScope) // 绑定生命周期，防止流失效
+
     override fun handleEvent(event: UiEvent) {
 
     }

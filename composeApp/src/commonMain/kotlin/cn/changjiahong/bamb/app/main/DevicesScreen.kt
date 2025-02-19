@@ -126,7 +126,7 @@ fun ModalBottomSheetPlus(
     properties: ModalBottomSheetProperties = ModalBottomSheetDefaults.properties,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    var isFirstInitializer by remember { mutableStateOf(true) }
+    var isFirstInitializer by rememberSaveable { mutableStateOf(true) }
     var isShow by rememberSaveable(sheetState.currentValue, sheetState.targetValue) {
         mutableStateOf(sheetState.currentValue != SheetValue.Hidden || sheetState.targetValue != SheetValue.Hidden)
     }
