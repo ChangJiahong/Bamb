@@ -12,5 +12,12 @@ import kotlinx.serialization.encoding.Encoder
  * @author ChangJiahong
  * @date 2022/6/29
  */
-class RestError(val restStatusCode: RestStatusCode, val msg: String = "", val data: Any? = null) : RuntimeException(msg)
+class RestError(val restStatusCode: RestStatusCode, val msg: String = "", val data: Any? = null) :
+    RuntimeException(msg)
 
+fun Throwable.asRestError(): RestError {
+    return when (this) {
+        is RestError -> this
+        else -> RestStatusCode.UnknownError.error(message ?: "")
+    }
+}

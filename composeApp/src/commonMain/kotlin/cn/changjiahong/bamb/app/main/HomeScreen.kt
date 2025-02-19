@@ -5,9 +5,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.LazyItemScope
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Text
@@ -22,6 +22,7 @@ import app.cash.paging.PagingSourceLoadResult
 import app.cash.paging.PagingSourceLoadResultError
 import app.cash.paging.PagingSourceLoadResultPage
 import app.cash.paging.PagingState
+import app.cash.paging.compose.LazyPagingItems
 import app.cash.paging.compose.collectAsLazyPagingItems
 import bamb.composeapp.generated.resources.Res
 import bamb.composeapp.generated.resources.app_name
@@ -30,15 +31,12 @@ import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import cn.changjiahong.bamb.bamb.http.getKtorfit
 import cn.changjiahong.bamb.bamb.http.model.RestResponse
+import cn.changjiahong.bamb.bamb.http.status.RestError
 import cn.changjiahong.bamb.bamb.http.status.RestStatusCode
+import cn.changjiahong.bamb.bamb.http.status.asRestError
 import cn.changjiahong.bamb.bamb.http.status.error
 import cn.changjiahong.bamb.service.Api
-import cn.changjiahong.bamb.service.createILoginService
-import de.jensklingenberg.ktorfit.http.Field
-import de.jensklingenberg.ktorfit.http.FormUrlEncoded
 import de.jensklingenberg.ktorfit.http.GET
-import de.jensklingenberg.ktorfit.http.POST
-import de.jensklingenberg.ktorfit.http.Path
 import de.jensklingenberg.ktorfit.http.Query
 import kotlinx.serialization.Serializable
 import org.koin.core.annotation.Factory
@@ -58,36 +56,85 @@ private fun HomeScreen.Home() {
 
     val pagingItems = homeScreenModel.pagingFlow.collectAsLazyPagingItems()
 
-    LazyColumn(modifier = Modifier.height(400.dp)){
-        items(pagingItems.itemCount){
+    RefreshLazyColumn(pagingItems, modifier = Modifier.fillMaxSize(),
+        refreshError = { Text(it.msg) },
+        appendLoading = { Text("加载中。。。。。。", modifier = Modifier.height(20.dp)) }) {
+        itemsIndexed(pagingItems) { index, item ->
             Row {
-                Text("$it")
+                Text("$index")
                 Spacer(modifier = Modifier.width(8.dp)) // 添加间距
-                Text(pagingItems[it]?.title ?: "NONONO")
+                Text(item?.title ?: "NONONO")
             }
-        }
-
-        pagingItems.loadState.apply {
-            when{
-                refresh is LoadStateError -> {
-                    item{
-                        Text((refresh as LoadStateError).error.message?:"")
-                    }
-                }
-
-                append is LoadStateLoading ->{
-                    item{
-                        Text("加载中。。。。。。", modifier = Modifier.height(20.dp))
-                    }
-                }
-            }
-        }
-
-        item{
-            Text("REERERERERRRRRRRRRRRRRRRRR")
         }
 
     }
+}
+
+@Composable
+fun <T : Any> RefreshLazyColumn(
+    pagingItems: LazyPagingItems<T>,
+    modifier: Modifier = Modifier,
+    refreshError: @Composable LazyItemScope.(RestError) -> Unit = {},
+    appendError: @Composable LazyItemScope.(RestError) -> Unit = {},
+    appendLoading: @Composable LazyItemScope.() -> Unit = {},
+    content: LazyListScope.() -> Unit
+) {
+
+    LazyColumn(modifier = modifier) {
+        content()
+
+        pagingItems.loadState.apply {
+            when {
+//                refresh is LoadStateLoading -> {}
+//                refresh is LoadStateNotLoading -> {}
+                refresh is LoadStateError -> {
+                    item {
+                        refreshError((refresh as LoadStateError).error.asRestError())
+                    }
+                }
+
+//                append is LoadStateNotLoading -> {}
+
+                append is LoadStateLoading -> {
+                    item {
+                        appendLoading()
+                    }
+                }
+
+                append is LoadStateError -> {
+                    item {
+                        appendError((append as LoadStateError).error.asRestError())
+                    }
+                }
+            }
+        }
+    }
+}
+
+inline fun <T : Any> LazyListScope.items(
+    items: LazyPagingItems<T>,
+    noinline key: ((item: T?) -> Any)? = null,
+    noinline contentType: (item: T?) -> Any? = { null },
+    crossinline itemContent: @Composable LazyItemScope.(item: T?) -> Unit
+) = items(
+    count = items.itemCount,
+    key = if (key != null) { index: Int -> key(items[index]) } else null,
+    contentType = { index: Int -> contentType(items[index]) }
+) {
+    itemContent(items[it])
+}
+
+inline fun <T : Any> LazyListScope.itemsIndexed(
+    items: LazyPagingItems<T>,
+    noinline key: ((index: Int, item: T?) -> Any)? = null,
+    crossinline contentType: (index: Int, item: T?) -> Any? = { _, _ -> null },
+    crossinline itemContent: @Composable LazyItemScope.(index: Int, item: T?) -> Unit
+) = items(
+    count = items.itemCount,
+    key = if (key != null) { index: Int -> key(index, items[index]) } else null,
+    contentType = { index -> contentType(index, items[index]) }
+) {
+    itemContent(it, items[it])
 }
 
 @Serializable
@@ -100,7 +147,7 @@ abstract class BasePagingSource<Value : Any> : PagingSource<Int, Value>() {
 
     protected abstract suspend fun fetchData(page: Int, limit: Int): PageResponse<Value>
 
-    private fun transformPagingData(restResponse:PageResponse<Value>): Page<Value>{
+    private fun transformPagingData(restResponse: PageResponse<Value>): Page<Value> {
         if (restResponse.status == RestStatusCode.OK) {
             if (restResponse.data != null) {
                 return (restResponse.data)
@@ -119,22 +166,24 @@ abstract class BasePagingSource<Value : Any> : PagingSource<Int, Value>() {
         val limit = params.loadSize
         return try {
             val page = transformPagingData(fetchData(currentPage, limit))
-
-            println("-----------__ $currentPage _------------------------")
             PagingSourceLoadResultPage(
                 data = page.data,
                 prevKey = if (currentPage == 1) null else currentPage - 1,
-                nextKey = (currentPage + 1).takeIf { page.data.lastIndex >= currentPage }
+                nextKey = (currentPage + 1).takeIf { page.total > currentPage * limit }
             )
-
-
         } catch (e: Exception) {
-            PagingSourceLoadResultError(e)
+            PagingSourceLoadResultError(e.asRestError())
         }
     }
 
     override fun getRefreshKey(state: PagingState<Int, Value>): Int? {
-        return state.anchorPosition
+        // 返回当前显示的数据项所在的页码或 ID
+        return state.anchorPosition?.let { position ->
+            // 从当前页面位置计算出应该从哪个位置开始刷新
+            state.closestPageToPosition(position)?.prevKey?.plus(1) ?: state.closestPageToPosition(
+                position
+            )?.nextKey?.minus(1)
+        }
     }
 
 }
@@ -150,7 +199,6 @@ class DSource(val postService: IPostService) : BasePagingSource<Post>() {
 }
 
 typealias PageResponse<T> = RestResponse<Page<T>>
-
 
 
 @Single
