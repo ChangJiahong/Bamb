@@ -93,7 +93,8 @@ kotlin {
             implementation(libs.composeSettings.ui.extended)
 
 
-
+            // 只解析html 字符串
+            implementation("com.fleeksoft.ksoup:ksoup:0.2.2")
 //            implementation("io.github.ltttttttttttt:ComposeViews:1.7.0")//this,比如1.6.11.2
         }
         desktopMain.dependencies {

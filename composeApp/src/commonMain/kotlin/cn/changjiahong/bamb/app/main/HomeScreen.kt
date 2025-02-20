@@ -1,5 +1,6 @@
 package cn.changjiahong.bamb.app.main
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,18 +11,21 @@ import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.pullToRefresh
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import app.cash.paging.LoadStateError
 import app.cash.paging.LoadStateLoading
@@ -38,6 +42,8 @@ import bamb.composeapp.generated.resources.app_name
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
+import cn.changjiahong.bamb.bamb.html.HtmlText
+import cn.changjiahong.bamb.bamb.html.toAnnotatedString
 import cn.changjiahong.bamb.bamb.http.getKtorfit
 import cn.changjiahong.bamb.bamb.http.model.RestResponse
 import cn.changjiahong.bamb.bamb.http.status.RestError
@@ -45,6 +51,7 @@ import cn.changjiahong.bamb.bamb.http.status.RestStatusCode
 import cn.changjiahong.bamb.bamb.http.status.asRestError
 import cn.changjiahong.bamb.bamb.http.status.error
 import cn.changjiahong.bamb.service.Api
+import com.fleeksoft.ksoup.Ksoup
 import de.jensklingenberg.ktorfit.http.GET
 import de.jensklingenberg.ktorfit.http.Query
 import kotlinx.coroutines.delay
@@ -65,6 +72,29 @@ object HomeScreen : Tab {
 private fun HomeScreen.Home() {
     val homeScreenModel = koinScreenModel<HomeScreenModel>()
 
+//    RefreshDemo(homeScreenModel)
+
+    Column {
+        Button(onClick = {
+            homeScreenModel.cli()
+        }) {
+            Text("Click")
+        }
+
+//        val str = """  Hello <span color="#ffff0000">World</span> !! <click action="ac1"> <b>Click</b> </click>  """
+        val str =
+            "Don’t have an account? <click action=\"action1\"><span color=\"#ffffffff\"><b>Sign up!</b></span></click>"
+
+        HtmlText(str, color = Color(0xff333333)) { action: String ->
+            println(action)
+        }
+
+    }
+
+}
+
+@Composable
+private fun RefreshDemo(homeScreenModel: HomeScreenModel) {
     val pagingItems = homeScreenModel.pagingFlow.collectAsLazyPagingItems()
 
     var refreshing by remember { mutableStateOf(false) }
@@ -73,9 +103,9 @@ private fun HomeScreen.Home() {
 
     RefreshLazyColumn(
         pagingItems, modifier = Modifier.fillMaxSize(),
-        isRefreshing=refreshing,
+        isRefreshing = refreshing,
         onRefresh = {
-            scope.launch{
+            scope.launch {
                 refreshing = true
                 delay(2000)
                 refreshing = false
@@ -109,7 +139,7 @@ fun <T : Any> RefreshLazyColumn(
 ) {
 
     PullToRefreshBox(isRefreshing, modifier = modifier, onRefresh = onRefresh) {
-        LazyColumn() {
+        LazyColumn(modifier = Modifier.fillMaxSize()) {
             content()
             pagingItems.loadState.apply {
                 when {

@@ -1,5 +1,8 @@
 package cn.changjiahong.bamb.app.main
 
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import app.cash.paging.Pager
 import app.cash.paging.PagingConfig
 import app.cash.paging.cachedIn
@@ -16,6 +19,11 @@ import cn.changjiahong.bamb.bamb.uieffect.GoEffect
 import cn.changjiahong.bamb.bamb.uieffect.ToastEffect
 import cn.changjiahong.bamb.service.TestService
 import cn.changjiahong.bamb.service.UU
+import com.fleeksoft.ksoup.Ksoup
+import com.fleeksoft.ksoup.nodes.Element
+import com.fleeksoft.ksoup.nodes.Node
+import com.fleeksoft.ksoup.nodes.TextNode
+import com.fleeksoft.ksoup.parser.Tag
 import kotlinx.coroutines.flow.catch
 import org.koin.core.annotation.Factory
 
@@ -42,7 +50,8 @@ class HomeScreenModel(val testService: TestService,val dSource: DSource) : MviSc
 
     fun cli() {
 
-        GoEffect(RR.OTHER).trigger()
+
+//        GoEffect(RR.OTHER).trigger()
 
 //        testService.t1().catch { cause ->
 //            when(cause){
@@ -53,6 +62,5 @@ class HomeScreenModel(val testService: TestService,val dSource: DSource) : MviSc
 //        }
 
     }
-
 
 }
