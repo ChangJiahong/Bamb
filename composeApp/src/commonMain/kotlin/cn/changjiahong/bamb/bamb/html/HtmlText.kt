@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -40,7 +41,7 @@ fun HtmlText(
     style: TextStyle = LocalTextStyle.current,
     onClick: (action: String) -> Unit = {}
 ) {
-    val annotatedString = rememberSaveable(html) { Html.fromHtml(html, ClickNode(onClick)) }
+    val annotatedString = rememberSaveable(html, saver = AnnotatedString.Saver) { Html.fromHtml(html, ClickNode(onClick)) }
     Text(
         annotatedString,
         modifier,

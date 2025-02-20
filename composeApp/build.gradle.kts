@@ -94,7 +94,10 @@ kotlin {
 
 
             // 只解析html 字符串
-            implementation("com.fleeksoft.ksoup:ksoup:0.2.2")
+            implementation(libs.ksoup)
+
+            implementation("io.github.kevinnzou:compose-webview-multiplatform:1.9.40")
+
 //            implementation("io.github.ltttttttttttt:ComposeViews:1.7.0")//this,比如1.6.11.2
         }
         desktopMain.dependencies {
@@ -137,7 +140,7 @@ project.tasks.withType(KotlinCompilationTask::class.java).configureEach {
 android {
     namespace = "cn.changjiahong.bamb"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
-
+    sourceSets["main"].resources.srcDirs("src/commonMain/resources")
     defaultConfig {
         applicationId = "cn.changjiahong.bamb"
         minSdk = libs.versions.android.minSdk.get().toInt()

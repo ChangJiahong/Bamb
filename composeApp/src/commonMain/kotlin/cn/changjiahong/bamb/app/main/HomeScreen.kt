@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -11,12 +12,10 @@ import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
-import androidx.compose.material3.pulltorefresh.pullToRefresh
-import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -43,7 +42,8 @@ import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import cn.changjiahong.bamb.bamb.html.HtmlText
-import cn.changjiahong.bamb.bamb.html.toAnnotatedString
+import cn.changjiahong.bamb.bamb.html.markdownContent
+import cn.changjiahong.bamb.bamb.html.markdownTemplate
 import cn.changjiahong.bamb.bamb.http.getKtorfit
 import cn.changjiahong.bamb.bamb.http.model.RestResponse
 import cn.changjiahong.bamb.bamb.http.status.RestError
@@ -51,7 +51,11 @@ import cn.changjiahong.bamb.bamb.http.status.RestStatusCode
 import cn.changjiahong.bamb.bamb.http.status.asRestError
 import cn.changjiahong.bamb.bamb.http.status.error
 import cn.changjiahong.bamb.service.Api
-import com.fleeksoft.ksoup.Ksoup
+import com.multiplatform.webview.util.KLogSeverity
+import com.multiplatform.webview.web.LoadingState
+import com.multiplatform.webview.web.WebView
+import com.multiplatform.webview.web.WebViewState
+import com.multiplatform.webview.web.rememberWebViewStateWithHTMLData
 import de.jensklingenberg.ktorfit.http.GET
 import de.jensklingenberg.ktorfit.http.Query
 import kotlinx.coroutines.delay
@@ -75,22 +79,57 @@ private fun HomeScreen.Home() {
 //    RefreshDemo(homeScreenModel)
 
     Column {
-        Button(onClick = {
-            homeScreenModel.cli()
-        }) {
-            Text("Click")
+        val state =
+            //rememberWebViewState("https://github.com/KevinnZou/compose-webview-multiplatform")
+
+            rememberWebViewStateWithHTMLData(markdownTemplate(markdownContent = markdownContent))
+//            rememberWebViewStateWithHTMLFile( "Markdown 模板.html")
+
+        val loadingState = state.loadingState
+        if (loadingState is LoadingState.Loading) {
+            LinearProgressIndicator(
+                progress = loadingState.progress,
+                modifier = Modifier.fillMaxWidth()
+            )
         }
+
+        LaunchedEffect(Unit) {
+            initWebView(state)
+        }
+        WebView(
+            state
+        )
 
 //        val str = """  Hello <span color="#ffff0000">World</span> !! <click action="ac1"> <b>Click</b> </click>  """
-        val str =
-            "Don’t have an account? <click action=\"action1\"><span color=\"#ffffffff\"><b>Sign up!</b></span></click>"
-
-        HtmlText(str, color = Color(0xff333333)) { action: String ->
-            println(action)
-        }
+//        HtmlTextDemo()
 
     }
 
+}
+
+fun initWebView(webViewState: WebViewState) {
+    webViewState.webSettings.apply {
+        zoomLevel = 1.0
+        isJavaScriptEnabled = true
+        logSeverity = KLogSeverity.Debug
+        allowFileAccessFromFileURLs = true
+        allowUniversalAccessFromFileURLs = true
+        androidWebSettings.apply {
+            isAlgorithmicDarkeningAllowed = true
+            safeBrowsingEnabled = true
+            allowFileAccess = true
+        }
+    }
+}
+
+@Composable
+private fun HtmlTextDemo() {
+    val str =
+        "Don’t have an account? <click action=\"action1\"><span color=\"#ff000000\"><b>Sign up!</b></span></click>"
+
+    HtmlText(str, color = Color(0xff333333)) { action: String ->
+        println(action)
+    }
 }
 
 @Composable
