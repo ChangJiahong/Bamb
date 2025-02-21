@@ -1,50 +1,59 @@
 package cn.changjiahong.bamb.app.main
 
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.withStyle
-import app.cash.paging.Pager
-import app.cash.paging.PagingConfig
 import app.cash.paging.cachedIn
 import cafe.adriel.voyager.core.model.screenModelScope
-import cn.changjiahong.bamb.app.RR
-import cn.changjiahong.bamb.bamb.datastore.DataStores
-import cn.changjiahong.bamb.bamb.datastore.dataStore
-import cn.changjiahong.bamb.bamb.http.asData
-import cn.changjiahong.bamb.bamb.http.collectIn
-import cn.changjiahong.bamb.bamb.http.status.RestError
+import cn.changjiahong.bamb.app.main.HomeUiEffect.RefreshEffect
 import cn.changjiahong.bamb.bamb.mvi.MviScreenModel
+import cn.changjiahong.bamb.bamb.mvi.UiEffect
 import cn.changjiahong.bamb.bamb.mvi.UiEvent
-import cn.changjiahong.bamb.bamb.uieffect.GoEffect
 import cn.changjiahong.bamb.bamb.uieffect.ToastEffect
-import cn.changjiahong.bamb.service.TestService
-import cn.changjiahong.bamb.service.UU
-import com.fleeksoft.ksoup.Ksoup
-import com.fleeksoft.ksoup.nodes.Element
-import com.fleeksoft.ksoup.nodes.Node
-import com.fleeksoft.ksoup.nodes.TextNode
-import com.fleeksoft.ksoup.parser.Tag
-import kotlinx.coroutines.flow.catch
+import cn.changjiahong.bamb.bean.Post
+import cn.changjiahong.bamb.repository.IReferralRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import org.koin.core.annotation.Factory
 
-val DataStores.uu by dataStore(UU("aaa"))
+//val DataStores.uu by dataStore(UU("aaa"))
+
+sealed class HomeUiEvent : UiEvent {
+    object RefreshEvent : HomeUiEvent()
+    object FinishRefreshEvent : HomeUiEvent()
+    class OnPostItemClickEvent(val post: Post) : HomeUiEvent()
+}
+
+sealed interface HomeUiEffect : UiEffect {
+    object RefreshEffect : HomeUiEffect
+}
 
 @Factory
-class HomeScreenModel(val testService: TestService,val dSource: DSource) : MviScreenModel() {
+class HomeScreenModel(val referralRepository: IReferralRepository) :
+    MviScreenModel() {
 
+    val postsDataFlow by lazy {
+        referralRepository.createPostsPager().cachedIn(screenModelScope) // 绑定生命周期，防止流失效
+    }
 
-    val pagingFlow = Pager(
-        config = PagingConfig(
-            pageSize = 10, // 每页大小
-            enablePlaceholders = false, // 是否启用占位符
-            prefetchDistance = 2 // 预加载 2 页
-        ),
-        pagingSourceFactory = { dSource }
-    ).flow
-        .cachedIn(screenModelScope) // 绑定生命周期，防止流失效
+    private val _refreshState = MutableStateFlow(true)
+    val isRefreshingState = _refreshState.asStateFlow()
 
     override fun handleEvent(event: UiEvent) {
+        if (event !is HomeUiEvent) {
+            return
+        }
+        when (event) {
+            is HomeUiEvent.RefreshEvent -> {
+                _refreshState.value = true
+                RefreshEffect.trigger()
+            }
 
+            is HomeUiEvent.FinishRefreshEvent -> {
+                _refreshState.value = false
+            }
+
+            is HomeUiEvent.OnPostItemClickEvent -> {
+                ToastEffect(event.post.title).trigger()
+            }
+        }
     }
 
 

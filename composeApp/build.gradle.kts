@@ -96,7 +96,9 @@ kotlin {
             // 只解析html 字符串
             implementation(libs.ksoup)
 
-            implementation("io.github.kevinnzou:compose-webview-multiplatform:1.9.40")
+            implementation(libs.compose.webview.multiplatform)
+
+            implementation("tech.annexflow.compose:constraintlayout-compose-multiplatform:0.5.1")
 
 //            implementation("io.github.ltttttttttttt:ComposeViews:1.7.0")//this,比如1.6.11.2
         }

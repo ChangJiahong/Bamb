@@ -3,6 +3,7 @@ package cn.changjiahong.bamb.bamb.mvi
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import cn.changjiahong.bamb.bamb.uieffect.UiEffectDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
@@ -20,12 +21,12 @@ abstract class MviScreenModel : ScreenModel, KoinComponent {
 
 
     init {
-        screenModelScope.launch {
+        screenModelScope.launch(Dispatchers.Main) {
             uiEvent.collect { value ->
                 handleEvent(value)
             }
         }
-        screenModelScope.launch {
+        screenModelScope.launch(Dispatchers.Main) {
             uiEffect.collect { value ->
                 _handleEffect(value)
             }
@@ -49,10 +50,10 @@ abstract class MviScreenModel : ScreenModel, KoinComponent {
     }
 
 
-    //    protected abstract fun initialState(): S
     protected abstract fun handleEvent(event: UiEvent)
 
     open fun handleEffect(handle: UiEffectHandler) {
-        _handleEffect = { if (!handle(it)) _handleEffect(it) }
+        val oldHandler = _handleEffect
+        _handleEffect = { if (!handle(it)) oldHandler(it) }
     }
 }

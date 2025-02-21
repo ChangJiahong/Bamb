@@ -30,7 +30,7 @@ fun WebViewNavigator.loadMarkdown(
 ) {
     val html = markdownTemplate(markdownContent)
     val baseUrl = "file://${FileStorage.getSharedResourceAssetsFilePath()}"
-    loadHtml(html,baseUrl, mimeType, encoding, historyUrl)
+    loadHtml(html, baseUrl, mimeType, encoding, historyUrl)
 }
 
 fun markdownData(

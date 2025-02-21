@@ -1,48 +1,19 @@
 package cn.changjiahong.bamb.bamb.html
 
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import cn.changjiahong.bamb.bamb.file.FileStorage
-import com.multiplatform.webview.web.WebContent
-import com.multiplatform.webview.web.WebStateSaver
 import com.multiplatform.webview.web.WebView
 import com.multiplatform.webview.web.WebViewNavigator
-import com.multiplatform.webview.web.WebViewState
 import com.multiplatform.webview.web.rememberWebViewNavigator
-import com.multiplatform.webview.web.rememberWebViewStateWithHTMLFile
 
-class MarkdownViewController(
-    val webViewState: WebViewState,
-    val webViewNavigator: WebViewNavigator
-) {
-
-    fun setContent(markdownContent: String) {
-        webViewNavigator.evaluateJavaScript("updateMarkdown(${markdownContent.jsStringValue()})")
-    }
-}
-
-@Composable
-fun rememberMarkdownViewController(): MarkdownViewController {
-
-    val state = rememberWebViewStateWithHTMLFile("markdownTemplate.html")
-
-    val navigator = rememberWebViewNavigator()
-
-    return remember { MarkdownViewController(state, navigator) }
-}
-
-private fun WebViewNavigator.setContent(markdownContent: String){
+private fun WebViewNavigator.setContent(markdownContent: String) {
     evaluateJavaScript("updateMarkdown(${markdownContent.jsStringValue()})")
 }
+
 @Composable
-fun MarkdownView(markdownContent: String) {
+fun MarkdownView(markdownContent: String,modifier: Modifier = Modifier) {
 
-
-//    val markdownViewController: MarkdownViewController = rememberMarkdownViewController()
 
     val webViewState = //rememberWebViewStateWithHTMLFile("markdownTemplate.html")
         rememberWebViewStateWithMarkdownData(markdownContent)
@@ -51,11 +22,11 @@ fun MarkdownView(markdownContent: String) {
 
     WebView(
         webViewState,
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier,
         navigator = webViewNavigator
     )
 
-    LaunchedEffect(markdownContent){
+    LaunchedEffect(markdownContent) {
         webViewNavigator.setContent(markdownContent)
     }
 }
