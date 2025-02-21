@@ -1,5 +1,71 @@
 package cn.changjiahong.bamb.bamb.html
 
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Modifier
+import cn.changjiahong.bamb.bamb.file.FileStorage
+import com.multiplatform.webview.web.WebContent
+import com.multiplatform.webview.web.WebStateSaver
+import com.multiplatform.webview.web.WebView
+import com.multiplatform.webview.web.WebViewNavigator
+import com.multiplatform.webview.web.WebViewState
+import com.multiplatform.webview.web.rememberWebViewNavigator
+import com.multiplatform.webview.web.rememberWebViewStateWithHTMLFile
+
+class MarkdownViewController(
+    val webViewState: WebViewState,
+    val webViewNavigator: WebViewNavigator
+) {
+
+    fun setContent(markdownContent: String) {
+        webViewNavigator.evaluateJavaScript("updateMarkdown(${markdownContent.jsStringValue()})")
+    }
+}
+
+@Composable
+fun rememberMarkdownViewController(): MarkdownViewController {
+
+    val state = rememberWebViewStateWithHTMLFile("markdownTemplate.html")
+
+    val navigator = rememberWebViewNavigator()
+
+    return remember { MarkdownViewController(state, navigator) }
+}
+
+private fun WebViewNavigator.setContent(markdownContent: String){
+    evaluateJavaScript("updateMarkdown(${markdownContent.jsStringValue()})")
+}
+@Composable
+fun MarkdownView(markdownContent: String) {
+
+
+//    val markdownViewController: MarkdownViewController = rememberMarkdownViewController()
+
+    val webViewState = //rememberWebViewStateWithHTMLFile("markdownTemplate.html")
+        rememberWebViewStateWithMarkdownData(markdownContent)
+
+    val webViewNavigator = rememberWebViewNavigator()
+
+    WebView(
+        webViewState,
+        modifier = Modifier.fillMaxSize(),
+        navigator = webViewNavigator
+    )
+
+    LaunchedEffect(markdownContent){
+        webViewNavigator.setContent(markdownContent)
+    }
+}
+
+
+fun String.jsStringValue(): String {
+    return "`${this.replace("`", "\\`")}`"
+}
+
+
 val markdownContent = """
     # 硬件方面
     ## 先上渲染图
@@ -161,149 +227,4 @@ val markdownContent = """
 
 
 
-""".trimIndent()
-
-
-fun markdownTemplate(markdownContent: String) = """
-    <!DOCTYPE html>
-    <html lang="en" class="ss-shaded-scrollbars" style="transition: background-color 0.15s;">
-
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
-        <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
-              name="viewport">
-        <meta name="description" content="">
-        <meta name="hexo-theme-A4" content="v1.9.1">
-        <title></title>
-        <link rel="stylesheet" href="file:///android_asset/md_files/style1.css">
-        <link rel="stylesheet" href="file:///android_asset/md_files/reset.css">
-        <link rel="stylesheet" href="file:///android_asset/md_files/markdown.css">
-        <link rel="stylesheet" href="file:///android_asset/md_files/fonts.css">
-        <link rel="stylesheet" href="file:///android_asset/md_files/style.css">
-
-        <meta name="generator" content="Hexo 7.3.0">
-        <style>
-            .github-emoji {
-              position: relative;
-              display: inline-block;
-              width: 1.2em;
-              min-height: 1.2em;
-              overflow: hidden;
-              vertical-align: top;
-              color: transparent;
-            }
-
-            .github-emoji>span {
-              position: relative;
-              z-index: 10;
-            }
-
-            .github-emoji img,
-            .github-emoji .fancybox {
-              margin: 0 !important;
-              padding: 0 !important;
-              border: none !important;
-              outline: none !important;
-              text-decoration: none !important;
-              user-select: none !important;
-              cursor: auto !important;
-            }
-
-            .github-emoji img {
-              height: 1.2em !important;
-              width: 1.2em !important;
-              position: absolute !important;
-              left: 50% !important;
-              top: 50% !important;
-              transform: translate(-50%, -50%) !important;
-              user-select: none !important;
-              cursor: auto !important;
-            }
-
-            .github-emoji-fallback {
-              color: inherit;
-            }
-
-            .github-emoji-fallback img {
-              opacity: 0 !important;
-            }
-        </style>
-
-    </head>
-
-
-
-    <body inmaintabuse="1">
-
-    <div class="paper">
-
-        <div class="paper-main">
-
-
-            <div class="content post-main">
-
-                <div class="post-md">
-                    <div id="md-viewer"></div>
-                    <textarea type="hidden" id="mdContent" style="display: none;">${markdownContent}</textarea>
-                </div>
-
-
-            </div>
-
-
-            <block>
-                <div class="f">
-
-                    <script src="file:///android_asset/md_files/jquery.min.js"></script>
-                    <!--目录-->
-                    <script src="file:///android_asset/md_files/jquery(1).min.js" type="text/javascript"></script>
-                    <script src="file:///android_asset/md_files/jquery-ui.min.js" type="text/javascript"></script>
-                    <script src="file:///android_asset/md_files/jquery.tocify.min.js" type="text/javascript"></script>
-
-                </div>
-            </block>
-        </div>
-
-
-    </div>
-    <link rel="stylesheet" href="file:///android_asset/md_files/index.css">
-    <link rel="stylesheet" href="file:///android_asset/md_files/github.css">
-    <!--<link rel="stylesheet" href="/assets/md/github-markdown.css"/>-->
-    <script>
-        let process = {
-          env: {
-            NODE_ENV: "production"
-          }
-        }
-
-    </script>
-    <script src="file:///android_asset/md_files/bytemd-1.21.0.umd.js.js"></script>
-    <script src="file:///android_asset/md_files/plugin-gfm-1.21.0.umd.js.js"></script>
-    <script src="file:///android_asset/md_files/index.umd.js"></script>
-    <script>
-        const plugins = [bytemdPluginGfm(), bytemdPluginHighlight()]
-
-        const mdContent = ${'$'}("#mdContent")
-
-        const editor = new bytemd.Viewer({
-          target: document.getElementById('md-viewer'), // DOM to render
-          props: {
-            value: mdContent.val(),
-            plugins,
-          },
-        })
-        editor.${'$'}on('change', (e) => {
-          // mdContent.val(e.detail.value)
-          console.log(e.detail.value);
-          // console.log(mdContent.val());
-          editor.${'$'}set({ value: e.detail.value })
-        })
-    </script>
-
-    </body>
-
-    </html>
-    
-    
 """.trimIndent()

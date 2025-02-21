@@ -12,12 +12,12 @@ import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,9 +41,16 @@ import bamb.composeapp.generated.resources.app_name
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
+import cn.changjiahong.bamb.bamb.file.FileStorage
 import cn.changjiahong.bamb.bamb.html.HtmlText
+import cn.changjiahong.bamb.bamb.html.MarkdownView
+import cn.changjiahong.bamb.bamb.html.jsStringValue
+import cn.changjiahong.bamb.bamb.html.loadMarkdown
 import cn.changjiahong.bamb.bamb.html.markdownContent
+import cn.changjiahong.bamb.bamb.html.markdownData
 import cn.changjiahong.bamb.bamb.html.markdownTemplate
+import cn.changjiahong.bamb.bamb.html.rememberMarkdownViewController
+import cn.changjiahong.bamb.bamb.html.rememberWebViewStateWithMarkdownData
 import cn.changjiahong.bamb.bamb.http.getKtorfit
 import cn.changjiahong.bamb.bamb.http.model.RestResponse
 import cn.changjiahong.bamb.bamb.http.status.RestError
@@ -55,12 +62,16 @@ import com.multiplatform.webview.util.KLogSeverity
 import com.multiplatform.webview.web.LoadingState
 import com.multiplatform.webview.web.WebView
 import com.multiplatform.webview.web.WebViewState
+import com.multiplatform.webview.web.rememberWebViewNavigator
+import com.multiplatform.webview.web.rememberWebViewState
 import com.multiplatform.webview.web.rememberWebViewStateWithHTMLData
+import com.multiplatform.webview.web.rememberWebViewStateWithHTMLFile
 import de.jensklingenberg.ktorfit.http.GET
 import de.jensklingenberg.ktorfit.http.Query
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 import org.koin.core.annotation.Factory
 import org.koin.core.annotation.Single
 
@@ -72,33 +83,88 @@ object HomeScreen : Tab {
     override fun Content() = Home()
 }
 
+private val json = Json { ignoreUnknownKeys = true }
+
 @Composable
 private fun HomeScreen.Home() {
     val homeScreenModel = koinScreenModel<HomeScreenModel>()
 
 //    RefreshDemo(homeScreenModel)
 
-    Column {
-        val state =
-            //rememberWebViewState("https://github.com/KevinnZou/compose-webview-multiplatform")
+    Column (modifier = Modifier.fillMaxWidth().height(400.dp)){
 
-            rememberWebViewStateWithHTMLData(markdownTemplate(markdownContent = markdownContent))
-//            rememberWebViewStateWithHTMLFile( "Markdown 模板.html")
+//        var p = FileStorage.getSharedResourceAssetsFilePath()
+//
+//        p = "file://$p"
 
-        val loadingState = state.loadingState
-        if (loadingState is LoadingState.Loading) {
-            LinearProgressIndicator(
-                progress = loadingState.progress,
-                modifier = Modifier.fillMaxWidth()
-            )
+//        val state =
+////            rememberWebViewState("https://juejin.cn/post/7057112301446365192")
+//
+////            rememberWebViewStateWithMarkdownData("")
+//            rememberWebViewStateWithHTMLFile( "markdownTemplate.html")
+//
+//        val navigator = rememberWebViewNavigator()
+
+//        val markdownViewController = rememberMarkdownViewController()
+
+        var md by remember { mutableStateOf(markdownContent) }
+
+        Button(onClick = {
+
+        }){
+            Text("Set New")
         }
 
-        LaunchedEffect(Unit) {
-            initWebView(state)
+        Button(onClick = {
+
+//            val jj = json.encodeToString(markdownContent)
+
+//            println(jj)
+
+            md = "## HHH \n # HAAA"
+
+//            markdownViewController.setContent(markdownContent)
+
+        }){
+            Text("Back")
         }
-        WebView(
-            state
-        )
+
+//        val loadingState = markdownViewController.webViewState.loadingState
+//        if (loadingState is LoadingState.Loading) {
+//            LinearProgressIndicator(
+//                progress = loadingState.progress,
+//                modifier = Modifier.fillMaxWidth()
+//            )
+//        }
+
+
+        MarkdownView(md)
+
+//        val url = "https://www.jetbrains.com/lp/compose-multiplatform/"
+//        val webViewState =
+//            rememberSaveableWebViewState(url).apply {
+//                webSettings.logSeverity = KLogSeverity.Debug
+//            }
+//
+//        val navigator = rememberWebViewNavigator()
+
+//        LaunchedEffect(navigator) {
+//            val bundle = webViewState.viewState
+//            if (bundle == null) {
+//                // This is the first time load, so load the home page.
+//                navigator.loadUrl(url)
+//            }
+//        }
+
+
+//        LaunchedEffect(Unit) {
+//            initWebView(state)
+//        }
+//        WebView(
+//            state,
+//            modifier = Modifier.fillMaxSize(),
+//            navigator=navigator
+//        )
 
 //        val str = """  Hello <span color="#ffff0000">World</span> !! <click action="ac1"> <b>Click</b> </click>  """
 //        HtmlTextDemo()

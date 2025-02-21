@@ -7,4 +7,8 @@ actual object FileStorage {
         return MyApp.app.filesDir.absolutePath
     }
 
+    actual fun getSharedResourceAssetsFilePath(): String {
+       return "/android_asset/"
+    }
+
 }

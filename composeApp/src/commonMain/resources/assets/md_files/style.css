@@ -44,6 +44,7 @@ a
 .paper-main
 {
     width: 100%;
+    min-height: 100vh;
     /* max-width: 880px; */
     margin: 0 auto;
     padding: 4vw 4vw 0px; /*上 宽 第*/
@@ -51,7 +52,7 @@ a
     /*border-radius: 24px;*/
     border-radius: 0px;
     background: #ffffff;
-    box-shadow:  0px 5px 13px #616161, -5px -5px 13px #ffffff;
+    /* box-shadow:  0px 5px 13px #616161, -5px -5px 13px #ffffff; */
 }
 .index-main
 {
