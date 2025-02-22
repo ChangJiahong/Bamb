@@ -2,10 +2,12 @@ package cn.changjiahong.bamb.app.main
 
 import app.cash.paging.cachedIn
 import cafe.adriel.voyager.core.model.screenModelScope
+import cn.changjiahong.bamb.app.RR
 import cn.changjiahong.bamb.app.main.HomeUiEffect.RefreshEffect
 import cn.changjiahong.bamb.bamb.mvi.MviScreenModel
 import cn.changjiahong.bamb.bamb.mvi.UiEffect
 import cn.changjiahong.bamb.bamb.mvi.UiEvent
+import cn.changjiahong.bamb.bamb.uieffect.GoEffect
 import cn.changjiahong.bamb.bamb.uieffect.ToastEffect
 import cn.changjiahong.bamb.bean.Post
 import cn.changjiahong.bamb.repository.IReferralRepository
@@ -51,7 +53,7 @@ class HomeScreenModel(val referralRepository: IReferralRepository) :
             }
 
             is HomeUiEvent.OnPostItemClickEvent -> {
-                ToastEffect(event.post.title).trigger()
+                GoEffect(RR.POST).trigger()
             }
         }
     }

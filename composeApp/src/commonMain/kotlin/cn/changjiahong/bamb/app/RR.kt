@@ -7,5 +7,5 @@ object RR {
     val LOGIN = LoginScreen
     val REGISTER = RegisterScreen()
     val MAIN = MainScreen
-    val OTHER = OtherScreen()
+    val POST = PostScreen()
 }

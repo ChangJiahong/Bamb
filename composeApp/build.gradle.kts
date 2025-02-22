@@ -100,6 +100,8 @@ kotlin {
 
             implementation("tech.annexflow.compose:constraintlayout-compose-multiplatform:0.5.1")
 
+            implementation("com.github.skydoves:landscapist-coil3:2.4.7")
+
 //            implementation("io.github.ltttttttttttt:ComposeViews:1.7.0")//this,比如1.6.11.2
         }
         desktopMain.dependencies {

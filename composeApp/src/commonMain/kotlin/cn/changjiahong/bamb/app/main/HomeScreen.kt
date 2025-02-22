@@ -29,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -47,6 +48,8 @@ import cn.changjiahong.bamb.bamb.html.markdownContent
 import cn.changjiahong.bamb.bean.Post
 import com.multiplatform.webview.util.KLogSeverity
 import com.multiplatform.webview.web.WebViewState
+import com.skydoves.landscapist.ImageOptions
+import com.skydoves.landscapist.coil3.CoilImage
 import kotlinx.serialization.json.Json
 
 object HomeScreen : Tab {
@@ -244,10 +247,13 @@ fun PostItem(postItem: Post, onItemClick: (Post) -> Unit = {}) {
                 maxLines = 1, overflow = TextOverflow.Ellipsis
             )
 
-            Box(
-//                model = Res.getUri(LocalContext.current, R.drawable.ad),
-//                contentDescription = "",
-//                contentScale = ContentScale.Crop,
+
+            CoilImage(
+                imageModel = { postItem.avatar }, // loading a network image or local resource using an URL.
+                imageOptions = ImageOptions(
+                    contentScale = ContentScale.Crop,
+                    alignment = Alignment.Center
+                ),
                 modifier = Modifier
                     .constrainAs(avatarRef) {
                         top.linkTo(titleRef.bottom, 5.dp)
@@ -255,21 +261,8 @@ fun PostItem(postItem: Post, onItemClick: (Post) -> Unit = {}) {
                     }
                     .clip(RoundedCornerShape(21.dp))
                     .size(21.dp)
-                    .background(Color.Red)
             )
 
-//            AsyncImage(
-//                model = Res.getUri(LocalContext.current, R.drawable.ad),
-//                contentDescription = "",
-//                contentScale = ContentScale.Crop,
-//                modifier = Modifier
-//                    .constrainAs(avatarRef) {
-//                        top.linkTo(titleRef.bottom, 5.dp)
-//                        start.linkTo(parent.start)
-//                    }
-//                    .clip(RoundedCornerShape(21.dp))
-//                    .size(21.dp)
-//            )
 
             Text(
                 postItem.author, modifier = Modifier
@@ -290,10 +283,13 @@ fun PostItem(postItem: Post, onItemClick: (Post) -> Unit = {}) {
                 width = Dimension.fillToConstraints
                 height = Dimension.wrapContent
             }, maxLines = 2, minLines = 2, overflow = TextOverflow.Ellipsis)
-            Box(
-//                model = Res.getUri(LocalContext.current, R.drawable.ad),
-//                contentDescription = "",
-//                contentScale = ContentScale.Crop,
+
+            CoilImage(
+                imageModel = { postItem.cover }, // loading a network image or local resource using an URL.
+                imageOptions = ImageOptions(
+                    contentScale = ContentScale.Crop,
+                    alignment = Alignment.Center
+                ),
                 modifier = Modifier
                     .constrainAs(coverRef) {
                         top.linkTo(titleRef.top)
@@ -303,23 +299,7 @@ fun PostItem(postItem: Post, onItemClick: (Post) -> Unit = {}) {
                     }
                     .aspectRatio(4 / 3f)
                     .clip(RoundedCornerShape(5.dp))
-                    .background(Color.Red)
             )
-
-//            AsyncImage(
-//                model = postItem.cover,
-//                contentDescription = "",
-//                contentScale = ContentScale.Crop,
-//                modifier = Modifier
-//                    .constrainAs(coverRef) {
-//                        top.linkTo(titleRef.top)
-//                        end.linkTo(parent.end)
-//                        bottom.linkTo(introRef.bottom)
-//                        height = Dimension.fillToConstraints
-//                    }
-//                    .aspectRatio(4 / 3f)
-//                    .clip(RoundedCornerShape(5.dp))
-//            )
 
         }
 
