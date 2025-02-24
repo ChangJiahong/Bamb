@@ -20,10 +20,12 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,11 +39,17 @@ import androidx.constraintlayout.compose.Dimension
 import app.cash.paging.compose.collectAsLazyPagingItems
 import bamb.composeapp.generated.resources.Res
 import bamb.composeapp.generated.resources.app_name
+import cafe.adriel.voyager.koin.getNavigatorScreenModel
+import cafe.adriel.voyager.koin.koinNavigatorScreenModel
 import cafe.adriel.voyager.koin.koinScreenModel
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
+import cn.changjiahong.bamb.GlobalNavigator
 import cn.changjiahong.bamb.bamb.compose.refresh.RefreshLazyColumn
 import cn.changjiahong.bamb.bamb.compose.refresh.itemsIndexed
+import cn.changjiahong.bamb.bamb.compose.refresh.rememberLazyListState
 import cn.changjiahong.bamb.bamb.html.HtmlText
 import cn.changjiahong.bamb.bamb.html.MarkdownView
 import cn.changjiahong.bamb.bamb.html.markdownContent
@@ -62,7 +70,8 @@ object HomeScreen : Tab {
 
 @Composable
 private fun HomeScreen.Home() {
-    val homeScreenModel = koinScreenModel<HomeScreenModel>()
+    val homeScreenModel = //koinScreenModel<HomeScreenModel>()
+        GlobalNavigator.current.koinNavigatorScreenModel<HomeScreenModel>()
 
     RefreshDemo(homeScreenModel)
 
@@ -169,6 +178,8 @@ private fun RefreshDemo(homeScreenModel: HomeScreenModel) {
 
     val isRefreshing by homeScreenModel.isRefreshingState.collectAsState()
 
+    val lazyListState = homeScreenModel.lazyListState
+
     homeScreenModel.handleEffect { effect ->
         when (effect) {
             is HomeUiEffect.RefreshEffect -> {
@@ -183,6 +194,7 @@ private fun RefreshDemo(homeScreenModel: HomeScreenModel) {
     RefreshLazyColumn(
         pagingItems,
         modifier = Modifier.fillMaxSize(),
+        state = lazyListState,
         verticalArrangement = Arrangement.spacedBy(5.dp),
         isRefreshing = isRefreshing,
         onRefresh = {

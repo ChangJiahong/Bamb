@@ -5,9 +5,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import app.cash.paging.LoadStateError
 import app.cash.paging.LoadStateLoading
@@ -26,6 +29,7 @@ import cn.changjiahong.bamb.bamb.http.status.asRestError
 fun <T : Any> RefreshLazyColumn(
     pagingItems: LazyPagingItems<T>,
     modifier: Modifier = Modifier,
+    state: LazyListState = rememberLazyListState(),
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
     refreshing: () -> Unit = {}, // 正在刷新
@@ -44,6 +48,7 @@ fun <T : Any> RefreshLazyColumn(
     PullToRefreshBox(isRefreshing, modifier = modifier, onRefresh = onRefresh) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
+            state = state,
             reverseLayout = reverseLayout,
             verticalArrangement = verticalArrangement
         ) {
@@ -95,6 +100,20 @@ fun <T : Any> RefreshLazyColumn(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun rememberLazyListState(
+    key: String,
+    initialFirstVisibleItemIndex: Int = 0,
+    initialFirstVisibleItemScrollOffset: Int = 0
+): LazyListState {
+    return rememberSaveable(saver = LazyListState.Saver, key = key) {
+        LazyListState(
+            initialFirstVisibleItemIndex,
+            initialFirstVisibleItemScrollOffset
+        )
     }
 }
 
