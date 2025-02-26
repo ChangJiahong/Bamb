@@ -6,6 +6,7 @@ pluginManagement {
 //        maven { url=uri ("https://www.jitpack.io")}
 //        maven { url=uri ("https://maven.aliyun.com/repository/public")}
 //        maven { url=uri ("https://maven.aliyun.com/repository/releases")}
+//        maven { url=uri ("https://repo.huaweicloud.com/repository/maven")}
 //        maven { url=uri ("https://maven.aliyun.com/repository/google")}
 //        maven { url=uri ("https://maven.aliyun.com/repository/central")}
 //        maven { url=uri ("https://maven.aliyun.com/repository/gradle-plugin")}
@@ -26,6 +27,7 @@ dependencyResolutionManagement {
 //        maven { url=uri ("https://www.jitpack.io")}
 //        maven { url=uri ("https://maven.aliyun.com/repository/public")}
 //        maven { url=uri ("https://maven.aliyun.com/repository/releases")}
+//        maven { url=uri ("https://repo.huaweicloud.com/repository/maven")}
 //        maven { url=uri ("https://maven.aliyun.com/repository/google")}
 //        maven { url=uri ("https://maven.aliyun.com/repository/central")}
 //        maven { url=uri ("https://maven.aliyun.com/repository/gradle-plugin")}
