@@ -7,10 +7,16 @@ import com.fleeksoft.ksoup.nodes.Node
 abstract class Tag(val name: String) {
     object NULL : Tag("")
 
+    object Assemble : Tag("h1,h2,h3,h4,h5,h6,a,strong,em,kbd,ol,ul,hr,p,blockquote")
+
     object B : Tag("b")
 
     object H1 : Tag("h1")
     object H2 : Tag("h2")
+
+    object P: Tag("p")
+
+    object Code: Tag("code")
 
 
 }
@@ -59,7 +65,12 @@ class TagHandlers : TagHandler(Tag.NULL) {
             tagHandlers[node.nodeName()]?.let { it(builder, node, appendChild) }
             return true
         }
-        return false
+
+        val key = tagHandlers.keys.find { key -> key.split(",").contains(node.nodeName()) }
+            ?: return false
+
+        tagHandlers[key]?.let { it(builder, node, appendChild) }
+        return true
     }
 
     override fun invoke(

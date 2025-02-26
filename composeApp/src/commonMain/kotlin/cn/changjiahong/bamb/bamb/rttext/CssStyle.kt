@@ -1,6 +1,13 @@
 package cn.changjiahong.bamb.bamb.rttext
 
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.graphics.drawscope.DrawStyle
+import androidx.compose.ui.text.ParagraphStyle
+import androidx.compose.ui.text.PlatformSpanStyle
+import androidx.compose.ui.text.SpanStyle
 import com.fleeksoft.ksoup.nodes.Document
+import com.fleeksoft.ksoup.nodes.Node
 
 
 // 数据结构表示 CSS 规则
@@ -82,10 +89,22 @@ fun Document.addCssStyle(cssStyle: CssStyle) {
         val elements = select(selector)
         for (element in elements) {
             properties.forEach { (key, value) ->
-                element.attr("style", "${element.attr("style")}; $key: $value;")
+                element.attr("style", "${element.attr("style")} $key: $value;")
             }
         }
     }
+}
+
+
+fun Node.parseStyle(): Pair<SpanStyle?, ParagraphStyle?> {
+    if (!hasAttr("style")) {
+        return Pair(null,null)
+    }
+    val styleStr = attr("style")
+    val spanStyle = CssEncoder.run { parseCssStyleMapToSpanStyle(parseCssStyle(styleStr)) }
+    val paragraphStyle =
+        CssEncoder.run { parseCssStyleMapToParagraphStyle(parseCssStyle(styleStr), mapOf()) }
+    return Pair(spanStyle, paragraphStyle)
 }
 
 
