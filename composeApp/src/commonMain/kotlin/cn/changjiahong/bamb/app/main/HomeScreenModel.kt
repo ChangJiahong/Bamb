@@ -62,7 +62,7 @@ class HomeScreenModel(val referralRepository: IReferralRepository) :
             }
 
             is HomeUiEvent.OnPostItemClickEvent -> {
-                GoEffect(RR.POST).trigger()
+                GoEffect(RR.POST(event.post)).trigger()
             }
         }
     }
