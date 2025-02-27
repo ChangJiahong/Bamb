@@ -55,7 +55,7 @@ import cn.changjiahong.bamb.bamb.compose.refresh.rememberLazyListState
 import cn.changjiahong.bamb.bamb.html.HtmlText
 import cn.changjiahong.bamb.bamb.html.MarkdownView
 import cn.changjiahong.bamb.bamb.html.markdownContent
-import cn.changjiahong.bamb.bamb.rttext.demo
+import cn.changjiahong.bamb.bamb.rttext.rt.demo
 import cn.changjiahong.bamb.bean.Post
 import com.multiplatform.webview.util.KLogSeverity
 import com.multiplatform.webview.web.WebViewState

@@ -41,6 +41,7 @@ open class HandlerContext : AnnotatedStringBuilderHandler {
         val name = node.nodeName()
         if (nodeHandlers.containsKey(name)) {
             nodeHandlers[name]!!.handler(builder, node)
+            return
         }
         defaultNodeHandler.handler(builder, node)
     }

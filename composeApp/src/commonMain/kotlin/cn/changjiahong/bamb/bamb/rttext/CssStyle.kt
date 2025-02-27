@@ -72,12 +72,6 @@ class CssStyle(val cssRules: List<CssRule>) {
     companion object {
         fun parseCss(cssStyle: String): CssStyle {
             val rules = CssParser.parseCssString(cssStyle)
-//            for (rule in rules) {
-//                println("Selectors: ${rule.selector}")
-//                rule.properties.forEach { (key, value) ->
-//                    println("  $key: $value")
-//                }
-//            }
             return CssStyle(rules)
         }
     }
