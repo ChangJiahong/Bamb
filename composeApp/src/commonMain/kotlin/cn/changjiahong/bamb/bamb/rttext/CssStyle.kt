@@ -124,7 +124,7 @@ val markdownCss = """
     .post-md h5,
     .post-md h6
     {
-        color: var(--font-color-1);
+        color: #000;
         margin: 12px 0;
     }
     .post-md h1
@@ -165,8 +165,8 @@ val markdownCss = """
     }
     .post-md a
     {
-        color: var(--font-color-2);
-        box-shadow: 0 2px 0 var(--line-1);
+        color: #666;
+        box-shadow: 0 2px 0 #ccc;
         /* transition: color ease-in-out .65s, box-shadow ease-in-out .65s; */
     }
   
@@ -205,7 +205,7 @@ val markdownCss = """
     {
         border: none;
         height: 1px;
-        background: var(--line-1);
+        background: #ccc;
         margin: 24px 0;
     }
 
@@ -217,7 +217,7 @@ val markdownCss = """
     }
     .post-md blockquote
     {
-        border-left: 2px solid var(--line-2);
+        border-left: 2px solid #ddd;
         padding-left: 12px;
         word-wrap: break-word;
     }
@@ -243,18 +243,18 @@ val markdownCss = """
     .post-md table th
     {
         padding: 12px 0;
-        border-bottom: 2px solid var(--line-1);
+        border-bottom: 2px solid #ccc;
     }
     .post-md table tr:nth-child(odd) td
     {
         padding: 12px 0;
-        border-bottom: 1px solid var(--line-1);
+        border-bottom: 1px solid #ccc;
         background: #fafafa;
     }
     .post-md table tr:nth-child(even) td
     {
         padding: 12px 0;
-        border-bottom: 1px solid var(--line-1);
+        border-bottom: 1px solid #ccc;
         background: #fff;
     }
 

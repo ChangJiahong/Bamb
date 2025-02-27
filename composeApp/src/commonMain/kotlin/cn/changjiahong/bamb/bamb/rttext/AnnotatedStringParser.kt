@@ -26,7 +26,7 @@ object AnnotatedStringParser {
     ): AnnotatedString {
         val doc = Ksoup.parse(content)
         parserConfig.cssStyle?.let { doc.addCssStyle(it) }
-        return AnnotatedStringBuilder(doc.body(), parserConfig.tagHandlers).build()
+        return annotatedStringBuild(doc.body(), parserConfig)
     }
 
     private fun markdownParse(content: String): AnnotatedString {
@@ -34,29 +34,26 @@ object AnnotatedStringParser {
     }
 }
 
-class AnnotatedStringBuilder(
-    val body: Node,
-    val tagHandlers: TagHandlers
-) {
+fun annotatedStringBuild(
+    body: Node,
+    parserConfig: ParserConfig,
+): AnnotatedString {
+    return buildAnnotatedString { appendNode(body, parserConfig) }
+}
 
-    private fun AnnotatedString.Builder.appendNode(node: Node) {
-        when {
-            node is TextNode -> {
-                append(node.text())
-            }
-
-            else -> tagHandlers(this, node) { appendChild(node) }
+fun AnnotatedString.Builder.appendNode(node: Node, parserConfig: ParserConfig) {
+    when {
+        node is TextNode -> {
+            append(node.text())
         }
-    }
 
-    private fun AnnotatedString.Builder.appendChild(node: Node) {
-        node.childNodes().forEach {
-            appendNode(it)
-        }
+        else -> parserConfig.tagHandlers(this, node, parserConfig)
     }
+}
 
-    fun build(): AnnotatedString {
-        return buildAnnotatedString { appendNode(body) }
+fun AnnotatedString.Builder.appendChild(node: Node, parserConfig: ParserConfig) {
+    node.childNodes().forEach {
+        appendNode(it, parserConfig)
     }
 }
 
@@ -68,6 +65,7 @@ sealed interface ParserType {
 
 
 class ParserConfig(
+    var linkAction: LinkAction = {},
     val tagHandlers: TagHandlers = Handlers.DefaultHandlers,
-    var cssStyle: CssStyle? = null
+    var cssStyle: CssStyle? = null,
 )

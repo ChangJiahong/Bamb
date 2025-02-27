@@ -7,32 +7,33 @@ import com.fleeksoft.ksoup.nodes.Node
 abstract class Tag(val name: String) {
     object NULL : Tag("")
 
-    object Assemble : Tag("h1,h2,h3,h4,h5,h6,a,strong,em,kbd,ol,ul,hr,p,blockquote")
+    object Assemble : Tag("em,kbd,ol,ul,hr,blockquote")
+    object H : Tag("h1,h2,h3,h4,h5,h6")
 
-    object B : Tag("b")
+    object B : Tag("b,strong")
 
-    object H1 : Tag("h1")
-    object H2 : Tag("h2")
+    object A : Tag("a")
 
-    object P: Tag("p")
+    object P : Tag("p")
 
-    object Code: Tag("code")
+    object Code : Tag("code")
 
 
 }
 
-typealias AnnotatedStringNodeHandler = AnnotatedString.Builder.(node: Node, appendChild: () -> Unit) -> Unit
+typealias AnnotatedStringNodeHandler = AnnotatedString.Builder.(node: Node, parserConfig: ParserConfig) -> Unit
+
 
 open class TagHandler(
     val tag: Tag,
     val annotatedStringNodeHandler: AnnotatedStringNodeHandler = { _, _ -> }
-) : (AnnotatedString.Builder, Node, () -> Unit) -> Unit {
+) : (AnnotatedString.Builder, Node, ParserConfig) -> Unit {
     override fun invoke(
         builder: AnnotatedString.Builder,
         node: Node,
-        appendChild: () -> Unit
+        parserConfig: ParserConfig
     ) =
-        builder.annotatedStringNodeHandler(node, appendChild)
+        builder.annotatedStringNodeHandler(node, parserConfig)
 }
 
 
@@ -59,26 +60,26 @@ class TagHandlers : TagHandler(Tag.NULL) {
     fun handler(
         builder: AnnotatedString.Builder,
         node: Node,
-        appendChild: () -> Unit
+        parserConfig: ParserConfig
     ): Boolean {
         if (tagHandlers.containsKey(node.nodeName())) {
-            tagHandlers[node.nodeName()]?.let { it(builder, node, appendChild) }
+            tagHandlers[node.nodeName()]?.let { it(builder, node, parserConfig) }
             return true
         }
 
         val key = tagHandlers.keys.find { key -> key.split(",").contains(node.nodeName()) }
             ?: return false
 
-        tagHandlers[key]?.let { it(builder, node, appendChild) }
+        tagHandlers[key]?.let { it(builder, node, parserConfig) }
         return true
     }
 
     override fun invoke(
         builder: AnnotatedString.Builder,
         node: Node,
-        appendChild: () -> Unit
+        parserConfig: ParserConfig
     ) {
-        if (!handler(builder, node, appendChild)) appendChild()
+        if (!handler(builder, node, parserConfig)) builder.appendChild(node,parserConfig)
     }
 
 }
