@@ -23,9 +23,9 @@ open class HandlerContext : AnnotatedStringBuilderHandler {
                 return@forEach
             }
             nodeHandlers[name] = nodeHandler
-            if (nodeHandler is InlineNodeProcessor) {
-                registerInlineContent(nodeHandler.inlineContent)
-            }
+//            if (nodeHandler is InlineNodeProcessor) {
+//                registerInlineContent(nodeHandler.inlineContent)
+//            }
         }
     }
 

@@ -19,6 +19,40 @@ import androidx.compose.ui.unit.sp
 import cn.changjiahong.bamb.bamb.rttext.parseStyle
 import com.fleeksoft.ksoup.nodes.Node
 
+const val H1 = "h1"
+const val H2 = "h2"
+const val H3 = "h3"
+const val H4 = "h4"
+const val H5 = "h5"
+const val H6 = "h6"
+const val P = "p"
+const val A = "a"
+const val DIV = "div"
+const val SPAN = "span"
+const val IMG = "img"
+const val UL = "ul"
+const val OL = "ol"
+const val LI = "li"
+const val TABLE = "table"
+const val TR = "tr"
+const val TD = "td"
+const val TH = "th"
+const val THEAD = "thead"
+const val TBODY = "tbody"
+const val FORM = "form"
+const val INPUT = "input"
+const val BUTTON = "button"
+const val LABEL = "label"
+const val SELECT = "select"
+const val OPTION = "option"
+const val TEXTAREA = "textarea"
+const val B = "b"
+const val STRONG = "strong"
+const val CODE = "code"
+
+fun tags(vararg tags: String): String {
+    return tags.joinToString(",")
+}
 
 object HandlerContextSingleton : HandlerContext() {
     init {
@@ -86,43 +120,8 @@ val assemble = NodeHandler("em,kbd,ol,ul,hr,blockquote") { node ->
     }
 }
 
-val code = InlineNodeProcessor(CODE, Placeholder(1000.sp, TextUnit.Unspecified, PlaceholderVerticalAlign.Center)) {
-    Box(modifier = Modifier.fillMaxWidth().wrapContentHeight().background(Color.Yellow)){
-        Text(it.replace("\\n","\n"))
+val code = InlineNodeProcessor(CODE, Placeholder(1000.sp, 100.sp, PlaceholderVerticalAlign.Center)) {
+    Box(modifier = Modifier.fillMaxWidth().height(100.dp).background(Color.Yellow)){
+        Text(it.replace("\\n","\n"), modifier = Modifier.background(Color.Cyan))
     }
-}
-
-const val H1 = "h1"
-const val H2 = "h2"
-const val H3 = "h3"
-const val H4 = "h4"
-const val H5 = "h5"
-const val H6 = "h6"
-const val P = "p"
-const val A = "a"
-const val DIV = "div"
-const val SPAN = "span"
-const val IMG = "img"
-const val UL = "ul"
-const val OL = "ol"
-const val LI = "li"
-const val TABLE = "table"
-const val TR = "tr"
-const val TD = "td"
-const val TH = "th"
-const val THEAD = "thead"
-const val TBODY = "tbody"
-const val FORM = "form"
-const val INPUT = "input"
-const val BUTTON = "button"
-const val LABEL = "label"
-const val SELECT = "select"
-const val OPTION = "option"
-const val TEXTAREA = "textarea"
-const val B = "b"
-const val STRONG = "strong"
-const val CODE = "code"
-
-fun tags(vararg tags: String): String {
-    return tags.joinToString(",")
 }
