@@ -3,8 +3,6 @@ package cn.changjiahong.bamb.bamb.rttext.rt
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.foundation.text.appendInlineContent
@@ -23,11 +21,8 @@ import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.text.PlaceholderVerticalAlign
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.fleeksoft.ksoup.nodes.Node
-import kotlin.random.Random
-import kotlin.uuid.Uuid
 
 typealias AnnotatedStringBuilder = AnnotatedString.Builder
 
@@ -73,30 +68,40 @@ open class NodeHandler(val name: String, val nodeProcessor: NodeProcessor) :
 
 open class InlineNodeProcessor(
     name: String,
-    placeholder: Placeholder,
     val composeFun: @Composable (contentText: String) -> Unit
-) :
-    NodeHandler(name, { node ->
-        withStyle(ParagraphStyle()) {
-            appendInlineContent(name, node.outerHtml().replace("\n", "\\n"))
-        }
-    }) {
-
-    val inlineContent = name to InlineTextContent(placeholder = placeholder, composeFun)
+) : NodeHandler(name, {}) {
 
     @Composable
     override fun handler(builder: AnnotatedStringBuilder, node: Node) {
-        val uu = (Random.Default.nextFloat() + 1).toString()
-        println("--$uu --")
+
+
+        val nodeHash = (node.hashCode()).toString()
 
         builder.apply {
             withStyle(ParagraphStyle()) {
-                appendInlineContent(uu,"$uu 哈哈哈哈哈哈哈哈傻还是傻是撒谎啥好飒好飒哈说哈杀手萨哈说")
+                appendInlineContent(
+                    nodeHash,
+                    node.outerHtml().replace("\n","\\n")
+                )
             }
         }
 
-        var s by remember { mutableStateOf(true) }
-        if (s) {
+        onMeasure(nodeHash,
+            node.outerHtml().replace("\n","\\n"))
+    }
+
+    @Composable
+    private fun onMeasure(
+        id: String,
+        alternateText: String
+    ) {
+        val handlerContext = LocalHandlerContext.current
+        if (handlerContext.hasInlineContent(id)){
+            return
+        }
+        var show by remember { mutableStateOf(true) }
+        if (show) {
+            handlerContext.preRegisterInlineContent()
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -105,14 +110,14 @@ open class InlineNodeProcessor(
                     .onGloballyPositioned { coordinates ->
                         // 获取测量后的尺寸
                         val size = coordinates.size
-//                        s=false
+                        show = false
                         println(size)
 
-                        HandlerContextSingleton.registerInlineContent(
-                            uu to InlineTextContent(
+                        handlerContext.registerInlineContent(
+                            id to InlineTextContent(
                                 Placeholder(
-                                    (size.width / 10).sp,
-                                    (size.height / 10).sp,
+                                    (size.width / 3).sp,
+                                    (size.height / 3).sp,
                                     PlaceholderVerticalAlign.Center
                                 ),
                                 composeFun
@@ -120,16 +125,12 @@ open class InlineNodeProcessor(
                         )
                     }
             ) {
-                composeFun("$uu 哈哈哈哈哈哈哈哈傻还是傻是撒谎啥好飒好飒哈说哈杀手萨哈说")
+                composeFun(alternateText)
             }
         }
-
-//
     }
 
-    fun onMe() {
 
-    }
 }
 
 @Composable

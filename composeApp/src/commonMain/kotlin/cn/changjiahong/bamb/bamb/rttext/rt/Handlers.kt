@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.ParagraphStyle
@@ -54,8 +56,15 @@ fun tags(vararg tags: String): String {
     return tags.joinToString(",")
 }
 
-object HandlerContextSingleton : HandlerContext() {
-    init {
+@Composable
+fun rememberHandlerContext(nodeHandlers: List<NodeHandler>): HandlerContext {
+    return remember(nodeHandlers) {
+        handlerContext(nodeHandlers)
+    }
+}
+
+fun handlerContext(nodeHandlers: List<NodeHandler>): HandlerContext {
+    return HandlerContext().apply {
         registerNodeHandlers(
             defaultNodeHandler,
             h,
@@ -64,8 +73,22 @@ object HandlerContextSingleton : HandlerContext() {
             assemble,
             code
         )
+        registerNodeHandlers(nodeHandlers)
     }
 }
+
+//object HandlerContextSingleton : HandlerContext() {
+//    init {
+//        registerNodeHandlers(
+//            defaultNodeHandler,
+//            h,
+//            p,
+//            strong,
+//            assemble,
+//            code
+//        )
+//    }
+//}
 
 val defaultNodeHandler = NodeHandler("") { node ->
     appendChild(node)
@@ -120,8 +143,9 @@ val assemble = NodeHandler("em,kbd,ol,ul,hr,blockquote") { node ->
     }
 }
 
-val code = InlineNodeProcessor(CODE, Placeholder(1000.sp, 100.sp, PlaceholderVerticalAlign.Center)) {
-    Box(modifier = Modifier.fillMaxWidth().height(100.dp).background(Color.Yellow)){
-        Text(it.replace("\\n","\n"), modifier = Modifier.background(Color.Cyan))
+val code =
+    InlineNodeProcessor(CODE) {
+        Box(modifier = Modifier.fillMaxWidth().wrapContentHeight().background(Color.Yellow)) {
+            Text("$$$$$ $it")
+        }
     }
-}

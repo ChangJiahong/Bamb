@@ -6,6 +6,7 @@ import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.remember
@@ -22,9 +23,6 @@ import cn.changjiahong.bamb.bamb.rttext.mc
 import com.fleeksoft.ksoup.Ksoup
 import com.fleeksoft.ksoup.nodes.Node
 import com.fleeksoft.ksoup.nodes.TextNode
-
-val LocalHandlerContext: ProvidableCompositionLocal<HandlerContext> =
-    staticCompositionLocalOf { error("HandlerContext not initialized") }
 
 @Composable
 fun demo() {
@@ -93,31 +91,38 @@ fun demo() {
 
 @Composable
 fun RtHtml(html: String, css: String = markdownCss) {
-    val document = remember(html,css) { Ksoup.parse(html).apply { addCssStyle(CssStyle.parseCss(css)) } }
+    val document =
+        remember(html, css) { Ksoup.parse(html).apply { addCssStyle(CssStyle.parseCss(css)) } }
     RenderNode(document.body())
 }
 
 @Composable
-fun RenderNode(node: Node, modifier: Modifier = Modifier) {
-    val annotatedString = BuildAnnotatedString(node)
-//    val annotatedString = buildAnnotatedString {
-//        withStyle(ParagraphStyle()){
-//            append("t1t1")
-//        }
-//        withStyle(ParagraphStyle()) {
-//            appendInlineContent("code", "aaaa")
-//        }
-//
-//        withStyle(ParagraphStyle()){
-//            append("t1t1")
-//        }
-//
-//    }
+fun RenderNode(
+    node: Node,
+    modifier: Modifier = Modifier,
+    nodeHandlers: List<NodeHandler> = emptyList()
+) {
+
+    CompositionLocalProvider(LocalHandlerContext provides rememberHandlerContext(nodeHandlers)) {
+
+        val annotatedString = BuildAnnotatedString(node)
+
+        println("annotatedString")
+        RenderNode(annotatedString, modifier)
+    }
+}
+
+@Composable
+private fun RenderNode(
+    annotatedString: AnnotatedString,
+    modifier: Modifier
+) {
+    val handlerContext = LocalHandlerContext.current
 
     Text(
         annotatedString,
         modifier = modifier.verticalScroll(rememberScrollState()).background(Color.White),
-        inlineContent = HandlerContextSingleton.inlineTextContents
+        inlineContent = handlerContext.inlineTextContents
     )
 }
 
@@ -130,12 +135,13 @@ fun BuildAnnotatedString(node: Node) = buildAnnotatedString {
 
 @Composable
 fun AnnotatedString.Builder.appendNode(node: Node) {
+    val handlerContext = LocalHandlerContext.current
     when {
         node is TextNode -> {
             append(node.text())
         }
 
-        else -> HandlerContextSingleton.handler(this, node)
+        else -> handlerContext.handler(this, node)
     }
 }
 
