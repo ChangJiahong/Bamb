@@ -1,6 +1,11 @@
 package cn.changjiahong.bamb.bamb.rttext.rt
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.foundation.verticalScroll
@@ -16,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.unit.dp
 import cn.changjiahong.bamb.bamb.rttext.CssStyle
 import cn.changjiahong.bamb.bamb.rttext.addCssStyle
 import cn.changjiahong.bamb.bamb.rttext.markdownCss
@@ -49,6 +55,7 @@ fun demo() {
             
             <!-- 超链接 -->
             <a href="https://example.com">点击访问 Example</a>
+            <p><a href="https://ex.com" style="color:#ffdd00;">点击访问</a></p>
 
             <!-- 列表 -->
             <ul>
@@ -77,38 +84,66 @@ fun demo() {
 
             <!-- 按钮 -->
             <button>点击按钮</button>
+            
+            <code>代码代码代码代码代码代代码代码代码代码代码代码代码代码代码代码代码代码代码代码码代码代码代码代码代码代码代码代码</code>
 
             <!-- 其他 HTML5 标签 -->
             <details>
                 <summary>点击展开详情</summary>
+                            <code>代码代码代码代码代码代代码代码代码代码代码代码代码代码代码代码代码代码代码代码码代码代码代码代码代码代码代码代码</code>
+
+
                 <p>这里是详细内容。</p>
             </details>
+            
+            
         </div>
     """.trimIndent()
 
-    RtHtml(mc)
+    Column {
+
+
+        RtHtml(html,
+            modifier = Modifier.fillMaxWidth().height(300.dp),
+            linkAction = {
+                println(it)
+            })
+
+        RtHtml(
+            mc,
+            modifier = Modifier.fillMaxWidth().fillMaxHeight(),
+            linkAction = {
+                println(it)
+            })
+    }
 }
 
 @Composable
-fun RtHtml(html: String, css: String = markdownCss) {
+fun RtHtml(
+    html: String,
+    css: String = markdownCss,
+    modifier: Modifier = Modifier,
+    nodeHandlers: List<NodeHandler> = defaultNodeHandlers,
+    linkAction: LinkAction = {}
+) {
     val document =
         remember(html, css) { Ksoup.parse(html).apply { addCssStyle(CssStyle.parseCss(css)) } }
-    RenderNode(document.body())
+    CompositionLocalProvider(LocalLinkAction provides linkAction) {
+        RenderNode(document.body(), modifier = modifier, nodeHandlers = nodeHandlers)
+    }
 }
 
 @Composable
 fun RenderNode(
     node: Node,
     modifier: Modifier = Modifier,
-    nodeHandlers: List<NodeHandler> = emptyList()
+    nodeHandlers: List<NodeHandler>
 ) {
-
     CompositionLocalProvider(LocalHandlerContext provides rememberHandlerContext(nodeHandlers)) {
-
-        val annotatedString = BuildAnnotatedString(node)
-
-        println("annotatedString")
-        RenderNode(annotatedString, modifier)
+        Box {
+            val annotatedString = BuildAnnotatedString(node)
+            RenderNode(annotatedString, modifier)
+        }
     }
 }
 
@@ -118,7 +153,6 @@ private fun RenderNode(
     modifier: Modifier
 ) {
     val handlerContext = LocalHandlerContext.current
-
     Text(
         annotatedString,
         modifier = modifier.verticalScroll(rememberScrollState()).background(Color.White),

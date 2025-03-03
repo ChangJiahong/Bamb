@@ -10,10 +10,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.text.PlaceholderVerticalAlign
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
@@ -65,14 +67,6 @@ fun rememberHandlerContext(nodeHandlers: List<NodeHandler>): HandlerContext {
 
 fun handlerContext(nodeHandlers: List<NodeHandler>): HandlerContext {
     return HandlerContext().apply {
-        registerNodeHandlers(
-            defaultNodeHandler,
-            h,
-            p,
-            strong,
-            assemble,
-            code
-        )
         registerNodeHandlers(nodeHandlers)
     }
 }
@@ -95,7 +89,23 @@ val defaultNodeHandler = NodeHandler("") { node ->
 }
 
 val a = NodeHandler(A) { node ->
+    val (spanStyle, paragraphStyle) = node.parseStyle()
+    withStyle(SpanStyle().merge(spanStyle)) {
+        withIf(node.hasAttr("href"), modifier = {
+            val href = node.attr("href")
+            val linkAction = LocalLinkAction.current
+            withLink(
+                LinkAnnotation.Clickable(
+                    href,
+                    linkInteractionListener = { linkAction(href) })
+            ) {
+                it()
+            }
+        }) {
+            appendChild(node)
+        }
 
+    }
 }
 
 val h = NodeHandler(tags(H1, H2, H3, H4, H5, H6)) { node ->
@@ -149,3 +159,14 @@ val code =
             Text("$$$$$ $it")
         }
     }
+
+
+val defaultNodeHandlers = listOf(
+    defaultNodeHandler,
+    a,
+    h,
+    p,
+    strong,
+    assemble,
+    code
+)

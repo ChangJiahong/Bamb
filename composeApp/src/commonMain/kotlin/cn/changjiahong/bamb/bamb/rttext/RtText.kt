@@ -34,7 +34,7 @@ val mc = """
             <div class="post-md">
                 <div id="md-viewer">
                     <div class="markdown-body"><h1>硬件方面</h1>
-                        <h2><a>先上渲染图</a></h2>
+                        <h2><a href="aa">先上渲染图</a></h2>
                         <p><img src="http://localhost:8081/assets/images/faces/face1.jpg" alt="Untitled2.JPG"></p>
                         <h4>实物图</h4>
                         <p><img src="http://localhost:8081/assets/images/logo.svg" alt="63b1c6cc5698bf18db31a922b621630.jpg"></p>

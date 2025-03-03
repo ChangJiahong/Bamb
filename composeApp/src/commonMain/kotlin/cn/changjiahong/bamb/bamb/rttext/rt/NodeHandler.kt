@@ -74,20 +74,21 @@ open class InlineNodeProcessor(
     @Composable
     override fun handler(builder: AnnotatedStringBuilder, node: Node) {
 
-
         val nodeHash = (node.hashCode()).toString()
 
         builder.apply {
             withStyle(ParagraphStyle()) {
                 appendInlineContent(
                     nodeHash,
-                    node.outerHtml().replace("\n","\\n")
+                    node.outerHtml().replace("\n", "\\n")
                 )
             }
         }
 
-        onMeasure(nodeHash,
-            node.outerHtml().replace("\n","\\n"))
+        onMeasure(
+            nodeHash,
+            node.outerHtml().replace("\n", "\\n")
+        )
     }
 
     @Composable
@@ -96,12 +97,14 @@ open class InlineNodeProcessor(
         alternateText: String
     ) {
         val handlerContext = LocalHandlerContext.current
-        if (handlerContext.hasInlineContent(id)){
+        if (handlerContext.hasInlineContent(id)) {
             return
         }
         var show by remember { mutableStateOf(true) }
         if (show) {
             handlerContext.preRegisterInlineContent()
+            val density = LocalDensity.current.density
+            val fontScale = LocalDensity.current.fontScale
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -111,13 +114,11 @@ open class InlineNodeProcessor(
                         // 获取测量后的尺寸
                         val size = coordinates.size
                         show = false
-                        println(size)
-
                         handlerContext.registerInlineContent(
                             id to InlineTextContent(
                                 Placeholder(
-                                    (size.width / 3).sp,
-                                    (size.height / 3).sp,
+                                    (size.width / density * fontScale).sp,
+                                    (size.height / density * fontScale).sp,
                                     PlaceholderVerticalAlign.Center
                                 ),
                                 composeFun
@@ -129,16 +130,4 @@ open class InlineNodeProcessor(
             }
         }
     }
-
-
-}
-
-@Composable
-internal fun Float.pxToSp(): TextUnit {
-    return (this / LocalDensity.current.fontScale).sp
-}
-
-@Composable
-internal fun Int.pxToSp(): TextUnit {
-    return (this / LocalDensity.current.fontScale).sp
 }
