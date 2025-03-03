@@ -2,26 +2,34 @@ package cn.changjiahong.bamb.bamb.rttext.rt
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.ParagraphStyle
-import androidx.compose.ui.text.Placeholder
-import androidx.compose.ui.text.PlaceholderVerticalAlign
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.withLink
-import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.TextUnitType
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.sp
 import cn.changjiahong.bamb.bamb.rttext.parseStyle
+import coil3.request.ImageRequest
+import coil3.request.SuccessResult
+import com.fleeksoft.ksoup.Ksoup
 import com.fleeksoft.ksoup.nodes.Node
+import com.skydoves.landscapist.ImageOptions
+import com.skydoves.landscapist.coil3.CoilImage
+import kotlinx.serialization.json.Json
 
 const val H1 = "h1"
 const val H2 = "h2"
@@ -71,18 +79,6 @@ fun handlerContext(nodeHandlers: List<NodeHandler>): HandlerContext {
     }
 }
 
-//object HandlerContextSingleton : HandlerContext() {
-//    init {
-//        registerNodeHandlers(
-//            defaultNodeHandler,
-//            h,
-//            p,
-//            strong,
-//            assemble,
-//            code
-//        )
-//    }
-//}
 
 val defaultNodeHandler = NodeHandler("") { node ->
     appendChild(node)
@@ -160,6 +156,47 @@ val code =
         }
     }
 
+val img = InlineNodeProcessor(IMG) {
+    Box(modifier = Modifier.fillMaxWidth()) {
+
+        val param: Param = Json.decodeFromString(it)
+        val node = Ksoup.parse(param.contentText).body().childNode(0)
+        var aspectRatio by remember { mutableStateOf(1f) }
+        val density = LocalDensity.current.density
+        val fontScale = LocalDensity.current.fontScale
+
+        val handlerContext = LocalHandlerContext.current
+
+        CoilImage(
+            imageModel = {
+                node.attr("src")
+            }, // loading a network image or local resource using an URL.
+            imageOptions = ImageOptions(
+                contentScale = ContentScale.Fit
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+//                .clip(RoundedCornerShape(21.dp))
+                .aspectRatio(aspectRatio)
+                .onSizeChanged { size ->
+                    handlerContext.updateInlineContent(
+                        param, (size.width / density * fontScale).sp,
+                        (size.height / density * fontScale).sp,
+                    )
+                }
+            ,
+            requestListener = {
+                object : ImageRequest.Listener {
+                    override fun onSuccess(request: ImageRequest, result: SuccessResult) {
+                        result.image.let {
+                            aspectRatio = it.width / (it.height * 1f)
+                        }
+                    }
+                }
+            }
+        )
+    }
+}
 
 val defaultNodeHandlers = listOf(
     defaultNodeHandler,
@@ -168,5 +205,6 @@ val defaultNodeHandlers = listOf(
     p,
     strong,
     assemble,
-    code
+    code,
+    img
 )

@@ -8,12 +8,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.text.Placeholder
+import androidx.compose.ui.text.PlaceholderVerticalAlign
+import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.sp
 import com.fleeksoft.ksoup.nodes.Node
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.serialization.Serializable
 
 val LocalHandlerContext: ProvidableCompositionLocal<HandlerContext> =
     staticCompositionLocalOf { error("HandlerContext not initialized") }
@@ -56,9 +62,10 @@ open class HandlerContext : AnnotatedStringBuilderHandler {
         _inlineTextContents[inlineContent.first] = inlineContent.second
 
         if (_inlineTextContents.size == inlineContentSize) {
-            inlineTextContents = _inlineTextContents
+            notifyInlineTextContents()
         }
     }
+
 
     fun hasInlineContent(key: String): Boolean {
         return _inlineTextContents.containsKey(key)
@@ -78,4 +85,33 @@ open class HandlerContext : AnnotatedStringBuilderHandler {
         inlineContentSize++
     }
 
+    fun updateInlineContent(param: Param, width: TextUnit, height: TextUnit) {
+        if (!hasInlineContent(param.nodeHash)) {
+            return
+        }
+        val inlineContent = _inlineTextContents[param.nodeHash]
+        inlineContent?.placeholder?.let {
+            if (it.width == width && it.height == height) {
+                return
+            }
+        }
+
+        _inlineTextContents[param.nodeHash] = InlineTextContent(
+            Placeholder(
+                width,
+                height,
+                PlaceholderVerticalAlign.Center
+            ), inlineContent!!.children
+        )
+        notifyInlineTextContents()
+
+    }
+
+    private fun notifyInlineTextContents() {
+        inlineTextContents = _inlineTextContents.toMap()
+    }
 }
+
+
+@Serializable
+data class Param(val nodeHash: String, val contentText: String)

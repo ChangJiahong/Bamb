@@ -103,11 +103,11 @@ fun demo() {
     Column {
 
 
-        RtHtml(html,
-            modifier = Modifier.fillMaxWidth().height(300.dp),
-            linkAction = {
-                println(it)
-            })
+//        RtHtml(html,
+//            modifier = Modifier.fillMaxWidth().height(300.dp),
+//            linkAction = {
+//                println(it)
+//            })
 
         RtHtml(
             mc,

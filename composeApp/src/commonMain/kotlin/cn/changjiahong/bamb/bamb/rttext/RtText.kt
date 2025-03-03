@@ -35,9 +35,9 @@ val mc = """
                 <div id="md-viewer">
                     <div class="markdown-body"><h1>硬件方面</h1>
                         <h2><a href="aa">先上渲染图</a></h2>
-                        <p><img src="http://localhost:8081/assets/images/faces/face1.jpg" alt="Untitled2.JPG"></p>
+                        <p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c7ab7290fadb45d1abd34472023c4091~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.image" alt="Untitled2.JPG"></p>
                         <h4>实物图</h4>
-                        <p><img src="http://localhost:8081/assets/images/logo.svg" alt="63b1c6cc5698bf18db31a922b621630.jpg"></p>
+                        <p><img src="https://th.bing.com/th/id/OIP.zZFL8oz3uR5Z70QHb-4VrgHaPs?rs=1&pid=ImgDetMain" alt="63b1c6cc5698bf18db31a922b621630.jpg"></p>
                         <h3>配置</h3>
                         <ul>
                             <li>主控：esp32 micro32 plus</li>
