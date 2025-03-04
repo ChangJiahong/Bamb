@@ -69,7 +69,7 @@ fun demo() {
             
             <!-- 表格 -->
             <table border="1">
-                <tbody><tr>
+                <tr>
                     <th>表头 1</th>
                     <th>表头 2</th>
                 </tr>
@@ -77,7 +77,7 @@ fun demo() {
                     <td>数据 1</td>
                     <td>数据 2</td>
                 </tr>
-            </tbody></table>
+            </table>
 
             <!-- 图片 -->
             <img src="https://via.placeholder.com/150" alt="测试图片">
@@ -103,18 +103,18 @@ fun demo() {
     Column {
 
 
-//        RtHtml(html,
-//            modifier = Modifier.fillMaxWidth().height(300.dp),
-//            linkAction = {
-//                println(it)
-//            })
-
-        RtHtml(
-            mc,
-            modifier = Modifier.fillMaxWidth().fillMaxHeight(),
+        RtHtml(html,
+            modifier = Modifier.fillMaxWidth().fillMaxHeight().verticalScroll(rememberScrollState()),
             linkAction = {
                 println(it)
             })
+
+//        RtHtml(
+//            mc,
+//            modifier = Modifier.fillMaxWidth().fillMaxHeight().verticalScroll(rememberScrollState()),
+//            linkAction = {
+//                println(it)
+//            })
     }
 }
 
@@ -155,7 +155,7 @@ private fun RenderNode(
     val handlerContext = LocalHandlerContext.current
     Text(
         annotatedString,
-        modifier = modifier.verticalScroll(rememberScrollState()).background(Color.White),
+        modifier = modifier.background(Color.White),
         inlineContent = handlerContext.inlineTextContents
     )
 }

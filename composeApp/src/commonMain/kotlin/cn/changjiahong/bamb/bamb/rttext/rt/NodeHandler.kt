@@ -85,7 +85,7 @@ open class InlineNodeProcessor(
     override fun handler(builder: AnnotatedStringBuilder, node: Node) {
 
         val nodeHash = (node.hashCode()).toString()
-        val param = Param(nodeHash,node.outerHtml().replace("\n", "\\n"))
+        val param = Param(nodeHash,node.outerHtml())
 
         val alternateText = Json.encodeToString(param)
 

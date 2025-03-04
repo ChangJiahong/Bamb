@@ -1,17 +1,34 @@
 package cn.changjiahong.bamb.bamb.rttext.rt
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
@@ -21,6 +38,7 @@ import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cn.changjiahong.bamb.bamb.rttext.parseStyle
 import coil3.request.ImageRequest
@@ -29,6 +47,8 @@ import com.fleeksoft.ksoup.Ksoup
 import com.fleeksoft.ksoup.nodes.Node
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.coil3.CoilImage
+import compose.icons.FeatherIcons
+import compose.icons.feathericons.Pocket
 import kotlinx.serialization.json.Json
 
 const val H1 = "h1"
@@ -58,6 +78,7 @@ const val LABEL = "label"
 const val SELECT = "select"
 const val OPTION = "option"
 const val TEXTAREA = "textarea"
+const val BLOCKQUOTE = "blockquote"
 const val B = "b"
 const val STRONG = "strong"
 const val CODE = "code"
@@ -128,7 +149,7 @@ val strong = NodeHandler(tags(B, STRONG)) { node: Node ->
     }
 }
 
-val assemble = NodeHandler("em,kbd,ol,ul,hr,blockquote") { node ->
+val assemble = NodeHandler("em,kbd,li,hr,blockquote") { node ->
     val (spanStyle, paragraphStyle) = node.parseStyle()
     val paragraphIndex = paragraphStyle?.let {
         pushStyle(paragraphStyle)
@@ -146,6 +167,39 @@ val assemble = NodeHandler("em,kbd,ol,ul,hr,blockquote") { node ->
 
     paragraphIndex?.let {
         pop(paragraphIndex)
+    }
+}
+
+val ul = InlineNodeProcessor(UL) {
+    val param: Param = Json.decodeFromString(it)
+    val node = Ksoup.parse(param.contentText).body().firstChild()!!
+    val linkAction = LocalLinkAction.current
+    Column {
+        node.childNodes().filter { it.nameIs(LI) }.forEach { n ->
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier.size(12.dp)
+                        .background(Color(0xFFCC6CE7), RoundedCornerShape(12.dp))
+                )
+                Spacer(modifier = Modifier.width(5.dp))
+                RtHtml(n.outerHtml(), linkAction = linkAction)
+            }
+        }
+    }
+}
+
+val ol = InlineNodeProcessor(OL) {
+    val param: Param = Json.decodeFromString(it)
+    val node = Ksoup.parse(param.contentText).body().firstChild()!!
+    val linkAction = LocalLinkAction.current
+    Column {
+        node.childNodes().filter { it.nameIs(LI) }.forEachIndexed { index, n ->
+            Row {
+                Text("${index + 1}.")
+                Spacer(modifier = Modifier.width(5.dp))
+                RtHtml(n.outerHtml(), linkAction = linkAction)
+            }
+        }
     }
 }
 
@@ -183,8 +237,7 @@ val img = InlineNodeProcessor(IMG) {
                         param, (size.width / density * fontScale).sp,
                         (size.height / density * fontScale).sp,
                     )
-                }
-            ,
+                },
             requestListener = {
                 object : ImageRequest.Listener {
                     override fun onSuccess(request: ImageRequest, result: SuccessResult) {
@@ -198,13 +251,50 @@ val img = InlineNodeProcessor(IMG) {
     }
 }
 
+val table = InlineNodeProcessor(TABLE) {
+    val param: Param = Json.decodeFromString(it)
+    val tableNode = Ksoup.parse(param.contentText).body().firstChild()!!
+
+    Column(modifier = Modifier) {
+        tableNode.childNodes().forEach { n ->
+            n.childNodes().filter { it.nameIs(TR) }.forEach { rowNode ->
+                if (rowNode.isEffectivelyFirst()) {
+                    HorizontalDivider(thickness = 1.dp, color = Color.Black)
+                }
+                Row(modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min)) {
+                    rowNode.childNodes().filter { it.nameIs(TH) || it.nameIs(TD) }
+                        .forEach { unitNode ->
+                            if (unitNode.isEffectivelyFirst()) {
+                                VerticalDivider(thickness = 1.dp, color = Color.Black)
+                            }
+                            Box(
+                                modifier = Modifier.weight(1f),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                RtHtml(
+                                    unitNode.outerHtml()
+                                )
+                            }
+                            VerticalDivider(thickness = 1.dp, color = Color.Black)
+                        }
+                }
+                HorizontalDivider(thickness = 1.dp, color = Color.Black)
+            }
+        }
+    }
+
+}
+
 val defaultNodeHandlers = listOf(
     defaultNodeHandler,
     a,
     h,
     p,
+    ul,
+    ol,
     strong,
     assemble,
     code,
-    img
+    img,
+    table
 )

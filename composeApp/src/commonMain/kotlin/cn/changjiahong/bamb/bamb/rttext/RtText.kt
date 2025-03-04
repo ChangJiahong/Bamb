@@ -45,7 +45,19 @@ val mc = """
                             <li>Flash：8M</li>
                             <li>PSRAM：2M</li>
                         </ul>
+                         <ol>
+                            <li>主控：esp32 micro32 plus</li>
+                            <li>主频：240Mhz</li>
+                            <li>Flash：8M</li>
+                            <li>PSRAM：2M</li>
+                        </ol>
                         <h2>软件方面</h2>
+                         <ol>
+                            <li>主控：esp32 micro32 plus</li>
+                            <li>主频：240Mhz</li>
+                            <li>Flash：8M</li>
+                            <li>PSRAM：2M</li>
+                        </ol>
                         <p>
                             众所周知，LVGL是一个十分优秀的图形框架，小到几百kb的单片机，大到Linux都可以运行。既然它这么优秀，各种组件又十分的全面，没道理不用。</p>
                         <h3>跟着官方例程适配esp32</h3>

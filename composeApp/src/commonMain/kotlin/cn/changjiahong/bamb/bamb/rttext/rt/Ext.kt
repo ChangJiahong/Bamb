@@ -14,3 +14,11 @@ fun withIf(
         content()
     }
 }
+
+fun String.encodeLn():String{
+    return replace("\n","\\n")
+}
+
+fun String.decodeLn():String{
+    return replace("\\n","\n")
+}
