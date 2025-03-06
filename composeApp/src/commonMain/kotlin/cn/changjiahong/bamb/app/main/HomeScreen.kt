@@ -52,10 +52,8 @@ import cn.changjiahong.bamb.GlobalNavigator
 import cn.changjiahong.bamb.bamb.compose.refresh.RefreshLazyColumn
 import cn.changjiahong.bamb.bamb.compose.refresh.itemsIndexed
 import cn.changjiahong.bamb.bamb.compose.refresh.rememberLazyListState
-import cn.changjiahong.bamb.bamb.html.HtmlText
 import cn.changjiahong.bamb.bamb.html.MarkdownView
 import cn.changjiahong.bamb.bamb.html.markdownContent
-import cn.changjiahong.bamb.bamb.rttext.demo
 import cn.changjiahong.bamb.bean.Post
 import com.multiplatform.webview.util.KLogSeverity
 import com.multiplatform.webview.web.WebViewState
@@ -76,7 +74,6 @@ private fun HomeScreen.Home() {
     val homeScreenModel = //koinScreenModel<HomeScreenModel>()
         GlobalNavigator.current.koinNavigatorScreenModel<HomeScreenModel>()
 
-    demo()
 
 //    RefreshDemo(homeScreenModel)
 
@@ -164,16 +161,6 @@ fun initWebView(webViewState: WebViewState) {
             safeBrowsingEnabled = true
             allowFileAccess = true
         }
-    }
-}
-
-@Composable
-private fun HtmlTextDemo() {
-    val str =
-        "Don’t have an account? <click action=\"action1\"><span color=\"#ff000000\"><b>Sign up!</b></span></click>"
-
-    HtmlText(str, color = Color(0xff333333)) { action: String ->
-        println(action)
     }
 }
 
